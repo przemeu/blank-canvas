@@ -27,9 +27,19 @@
       dark:focus:border-arka-gold dark:focus:ring-arka-gold/20;
   }
   .field-active {
-    @apply border-yellow-400 bg-yellow-200/90 font-semibold text-slate-950 shadow-sm
+    @apply border-amber-400 bg-amber-100 font-semibold text-slate-950 shadow-sm
       focus:border-amber-500 focus:ring-amber-400/40
-      dark:border-arka-gold dark:bg-amber-400/25 dark:text-amber-100 dark:focus:ring-arka-gold/30;
+      dark:border-arka-gold dark:bg-slate-900 dark:text-amber-300 dark:ring-1 dark:ring-arka-gold/50 dark:focus:ring-arka-gold/40;
+  }
+
+  select option {
+    background-color: #ffffff;
+    color: #0f172a;
+  }
+  .dark select option,
+  html.dark select option {
+    background-color: #0f172a;
+    color: #f8fafc;
   }
 
   .btn {

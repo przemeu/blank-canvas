@@ -342,7 +342,16 @@ export function computeStats(input: Match[]): Stats {
   let bestRef: RefereeRecord | null = null;
   let worstRef: RefereeRecord | null = null;
   const refList = Array.from(referees.values());
-  if (refList.length > 0) {
+  if (refList.length === 1) {
+    const single = refList[0];
+    if (single.pointsPct > 50) {
+      bestRef = single;
+      worstRef = null;
+    } else {
+      bestRef = null;
+      worstRef = single;
+    }
+  } else if (refList.length > 1) {
     let cands = refList;
     for (const minG of [3, 2, 1]) {
       const f = refList.filter((r) => r.games >= minG);
@@ -369,6 +378,14 @@ export function computeStats(input: Match[]): Stats {
     );
     bestRef = sortedBest[0] ?? null;
     worstRef = sortedWorst[0] ?? null;
+
+    if (bestRef && worstRef && bestRef.name === worstRef.name) {
+      if (bestRef.pointsPct > 50) {
+        worstRef = null;
+      } else {
+        bestRef = null;
+      }
+    }
   }
   s.bestReferee = bestRef;
   s.worstReferee = worstRef;

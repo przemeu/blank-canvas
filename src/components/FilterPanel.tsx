@@ -45,9 +45,11 @@ function Select({
         {label}
       </span>
       <select className={cn("field pr-8", value && "field-active")} value={value} onChange={(e) => onChange(e.target.value)}>
-        <option value="">{placeholder}</option>
+        <option value="" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+          {placeholder}
+        </option>
         {options.map((o) => (
-          <option key={o.value} value={o.value}>
+          <option key={o.value} value={o.value} className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
             {o.label}
           </option>
         ))}
