@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-slate-100 text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-200;
+    font-feature-settings: "tnum" 1;
+  }
+  ::selection {
+    @apply bg-arka-gold/60 text-arka-navy;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-card dark:border-slate-800 dark:bg-slate-900;
+  }
+
+  .field {
+    @apply h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-800 placeholder:text-slate-400
+      transition focus:border-arka-navy focus:outline-none focus:ring-2 focus:ring-arka-navy/20
+      dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500
+      dark:focus:border-arka-gold dark:focus:ring-arka-gold/20;
+  }
+  .field-active {
+    @apply border-arka-navy bg-arka-navy/5 font-medium dark:border-arka-gold dark:bg-arka-gold/10;
+  }
+
+  .btn {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold transition
+      focus:outline-none focus-visible:ring-2 focus-visible:ring-arka-gold disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-arka-navy text-white hover:bg-arka-navy-light dark:bg-arka-gold dark:text-arka-navy dark:hover:bg-arka-gold-dark;
+  }
+  .btn-gold {
+    @apply btn bg-arka-gold text-arka-navy hover:bg-arka-gold-dark;
+  }
+  .btn-ghost {
+    @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50
+      dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700;
+  }
+  .btn-danger {
+    @apply btn border border-red-200 bg-red-50 text-red-700 hover:bg-red-100
+      dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-900/40;
+  }
+
+  .link {
+    @apply cursor-pointer text-arka-navy decoration-arka-gold decoration-2 underline-offset-2 hover:underline dark:text-sky-300;
+  }
+  .stat-value {
+    @apply font-bold text-arka-navy dark:text-arka-gold;
+  }
+
+  .checkbox {
+    @apply h-4 w-4 cursor-pointer rounded border-slate-300 accent-arka-navy dark:accent-arka-gold;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+}
