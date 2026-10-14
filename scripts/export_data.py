@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Eksport danych Kalendarium (SQLite -> JSON) + kopiowanie herbów.
 
@@ -91,6 +91,26 @@ def clean_place(value):
     if text in ("Neutralny", "Neutralne"):
         return "Neutralne"
     return text
+
+
+REFEREE_MAPPINGS = {
+    "Karol Arys": "Karol Arys (Szczecin)",
+    "Łukasz Szczech": "Łukasz Szczech (Warszawa)",
+    "Marcin Kochanek": "Marcin Kochanek (Opole)",
+    "Paweł Malec": "Paweł Malec (Łódź)",
+    "Piotr Rzucidlo": "Piotr Rzucidło (Warszawa)",
+    "Piotr Rzucidło": "Piotr Rzucidło (Warszawa)",
+    "Sylwester Rasmus": "Sylwester Rasmus (Toruń)",
+    "Tomasz Marciniak": "Tomasz Marciniak (Płock)",
+    "Tomasz Wajda": "Tomasz Wajda (Żywiec)",
+}
+
+
+def clean_referee(value):
+    text = clean_text(value)
+    if not text:
+        return None
+    return REFEREE_MAPPINGS.get(text, text)
 
 
 # --------------------------------------------------------------------------- #
@@ -236,7 +256,7 @@ def export_matches() -> None:
             clean_text(r["gol_przeciwnika"]),
             encode_squad(clean_text(r["sklad_arka"]), players),
             encode_squad(clean_text(r["sklad_przeciwnika"]), players),
-            d("sedzia", clean_text(r["sedzia"])),
+            d("sedzia", clean_referee(r["sedzia"])),
             encode_cards(r["kartki_arka"], players),
             encode_cards(r["kartki_przeciwnik"], players),
         ])

@@ -62,7 +62,7 @@ export function applyFilters(matches: Match[], f: Filters): Match[] {
     if (f.opponent && m.przeciwnik !== f.opponent) return false;
     if (f.league && m.liga !== f.league) return false;
     if (f.place && m.miejsce !== f.place) return false;
-    if (f.referee && m.sedzia !== f.referee) return false;
+    if (f.referee && m.sedzia !== f.referee && !m.sedzia?.startsWith(f.referee + " (")) return false;
     if (f.rok && String(m.rok) !== f.rok.trim()) return false;
 
     if (f.wynik) {
