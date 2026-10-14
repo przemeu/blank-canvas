@@ -16,6 +16,8 @@ import {
   Skull,
   Swords,
   Target,
+  ThumbsDown,
+  ThumbsUp,
   Trophy,
   Users,
 } from "lucide-react";
@@ -322,6 +324,66 @@ export default function StatsDashboard({ stats }: { stats: Stats }) {
                 {s.worstOpponent.goalsFor}:{s.worstOpponent.goalsAgainst}
               </V>{" "}
               <span className="text-xs text-slate-500">({signed(s.worstOpponent.goalsFor - s.worstOpponent.goalsAgainst)})</span>
+            </Row>
+          </>
+        ) : (
+          "–"
+        )}
+      </Card>
+
+      <Card title="Ulubiony sędzia" icon={<ThumbsUp className="h-4 w-4" />} accent="bg-emerald-500">
+        {s.bestReferee ? (
+          <>
+            <div className="font-semibold">{s.bestReferee.name}</div>
+            <Row label="Punkty">
+              <V>
+                {s.bestReferee.points}/{s.bestReferee.possiblePoints}
+              </V>{" "}
+              <span className="text-xs text-slate-500">({s.bestReferee.pointsPct.toFixed(1)}%)</span>
+            </Row>
+            <Row label="Bilans W-R-P">
+              <V>
+                {s.bestReferee.wins}-{s.bestReferee.draws}-{s.bestReferee.losses}
+              </V>{" "}
+              <span className="text-xs text-slate-500">
+                ({s.bestReferee.games} {plural(s.bestReferee.games, "mecz", "mecze", "meczów")})
+              </span>
+            </Row>
+            <Row label="Bramki">
+              <V>
+                {s.bestReferee.goalsFor}:{s.bestReferee.goalsAgainst}
+              </V>{" "}
+              <span className="text-xs text-slate-500">({signed(s.bestReferee.goalsFor - s.bestReferee.goalsAgainst)})</span>
+            </Row>
+          </>
+        ) : (
+          "–"
+        )}
+      </Card>
+
+      <Card title="Znienawidzony sędzia" icon={<ThumbsDown className="h-4 w-4" />} accent="bg-red-500">
+        {s.worstReferee ? (
+          <>
+            <div className="font-semibold">{s.worstReferee.name}</div>
+            <Row label="Punkty">
+              <V>
+                {s.worstReferee.points}/{s.worstReferee.possiblePoints}
+              </V>{" "}
+              <span className="text-xs text-slate-500">({s.worstReferee.pointsPct.toFixed(1)}%)</span>
+            </Row>
+            <Row label="Bilans W-R-P">
+              <V>
+                {s.worstReferee.wins}-{s.worstReferee.draws}-{s.worstReferee.losses}
+              </V>{" "}
+              <span className="text-xs text-slate-500">
+                ({s.worstReferee.games} {plural(s.worstReferee.games, "mecz", "mecze", "meczów")})
+              </span>
+            </Row>
+            <Row label="Bramki">
+              <V>
+                {s.worstReferee.goalsFor}:{s.worstReferee.goalsAgainst}
+              </V>{" "}
+              <span className="text-xs text-slate-500">({signed(s.worstReferee.goalsFor - s.worstReferee.goalsAgainst)})</span>
             </Row>
           </>
         ) : (

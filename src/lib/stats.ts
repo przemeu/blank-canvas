@@ -18,6 +18,19 @@ export interface OpponentRecord {
   points: number;
 }
 
+export interface RefereeRecord {
+  name: string;
+  games: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  points: number;
+  possiblePoints: number;
+  pointsPct: number;
+}
+
 export interface ScoreCount {
   score: string | null;
   count: number;
@@ -63,6 +76,8 @@ export interface Stats {
   commonScore: { total: ScoreCount; home: ScoreCount; away: ScoreCount };
   bestOpponent: OpponentRecord | null;
   worstOpponent: OpponentRecord | null;
+  bestReferee: RefereeRecord | null;
+  worstReferee: RefereeRecord | null;
 }
 
 class StreakTracker {
@@ -135,6 +150,8 @@ export function computeStats(input: Match[]): Stats {
     commonScore: { total: { score: null, count: 0 }, home: { score: null, count: 0 }, away: { score: null, count: 0 } },
     bestOpponent: null,
     worstOpponent: null,
+    bestReferee: null,
+    worstReferee: null,
   };
 
   const tWins = new StreakTracker();
@@ -153,6 +170,7 @@ export function computeStats(input: Match[]): Stats {
   const scoresHome = new Map<string, number>();
   const scoresAway = new Map<string, number>();
   const opponents = new Map<string, OpponentRecord>();
+  const referees = new Map<string, RefereeRecord>();
   let bestWinDiff = 0;
   let worstLossDiff = 0;
 
@@ -256,6 +274,34 @@ export function computeStats(input: Match[]): Stats {
       else o.losses++;
       o.points = o.wins * 3 + o.draws;
     }
+
+    if (m.sedzia) {
+      let r = referees.get(m.sedzia);
+      if (!r) {
+        r = {
+          name: m.sedzia,
+          games: 0,
+          wins: 0,
+          draws: 0,
+          losses: 0,
+          goalsFor: 0,
+          goalsAgainst: 0,
+          points: 0,
+          possiblePoints: 0,
+          pointsPct: 0,
+        };
+        referees.set(m.sedzia, r);
+      }
+      r.games++;
+      r.goalsFor += gf;
+      r.goalsAgainst += ga;
+      if (gf > ga) r.wins++;
+      else if (gf === ga) r.draws++;
+      else r.losses++;
+      r.points = r.wins * 3 + r.draws;
+      r.possiblePoints = r.games * 3;
+      r.pointsPct = r.possiblePoints > 0 ? (r.points / r.possiblePoints) * 100 : 0;
+    }
   }
 
   s.streaks = {
@@ -291,6 +337,41 @@ export function computeStats(input: Match[]): Stats {
   }
   s.bestOpponent = best;
   s.worstOpponent = worst;
+
+  // Ulubiony i znienawidzony sędzia: punkty zdobyte na możliwe
+  let bestRef: RefereeRecord | null = null;
+  let worstRef: RefereeRecord | null = null;
+  const refList = Array.from(referees.values());
+  if (refList.length > 0) {
+    let cands = refList;
+    for (const minG of [3, 2, 1]) {
+      const f = refList.filter((r) => r.games >= minG);
+      if (f.length >= 2 || minG === 1) {
+        cands = f;
+        break;
+      }
+    }
+    const sortedBest = [...cands].sort(
+      (a, b) =>
+        b.pointsPct - a.pointsPct ||
+        b.games - a.games ||
+        b.points - a.points ||
+        b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
+        a.name.localeCompare(b.name)
+    );
+    const sortedWorst = [...cands].sort(
+      (a, b) =>
+        a.pointsPct - b.pointsPct ||
+        b.games - a.games ||
+        b.losses - a.losses ||
+        a.goalsFor - a.goalsAgainst - (b.goalsFor - b.goalsAgainst) ||
+        a.name.localeCompare(b.name)
+    );
+    bestRef = sortedBest[0] ?? null;
+    worstRef = sortedWorst[0] ?? null;
+  }
+  s.bestReferee = bestRef;
+  s.worstReferee = worstRef;
 
   return s;
 }
