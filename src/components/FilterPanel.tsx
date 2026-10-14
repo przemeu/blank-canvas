@@ -36,7 +36,14 @@ function Select({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</span>
+      <span
+        className={cn(
+          "mb-1 block text-[11px] font-semibold uppercase tracking-wide",
+          value ? "text-amber-800 font-bold dark:text-arka-gold" : "text-slate-500 dark:text-slate-400"
+        )}
+      >
+        {label}
+      </span>
       <select className={cn("field pr-8", value && "field-active")} value={value} onChange={(e) => onChange(e.target.value)}>
         <option value="">{placeholder}</option>
         {options.map((o) => (
@@ -84,7 +91,14 @@ function TextFilter({
 
   return (
     <label className="block">
-      <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</span>
+      <span
+        className={cn(
+          "mb-1 block text-[11px] font-semibold uppercase tracking-wide",
+          value ? "text-amber-800 font-bold dark:text-arka-gold" : "text-slate-500 dark:text-slate-400"
+        )}
+      >
+        {label}
+      </span>
       <div className="relative">
         <input
           type="text"
@@ -108,7 +122,7 @@ function TextFilter({
         {local && (
           <button
             type="button"
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-slate-500 hover:text-slate-900 dark:text-amber-200 dark:hover:text-amber-100"
             onClick={() => {
               setLocal("");
               session.current = false;
@@ -133,7 +147,10 @@ export default function FilterPanel({ filters, options, activeCount, setFilter, 
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 text-left dark:border-slate-800"
+        className={cn(
+          "flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-50/50 dark:hover:bg-slate-800/50",
+          open && "border-b border-slate-200 dark:border-slate-800"
+        )}
       >
         <span className="flex items-center gap-2 font-semibold text-arka-navy dark:text-arka-gold">
           <Filter className="h-4 w-4" />

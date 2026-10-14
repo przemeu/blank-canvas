@@ -27,7 +27,9 @@
       dark:focus:border-arka-gold dark:focus:ring-arka-gold/20;
   }
   .field-active {
-    @apply border-arka-navy bg-arka-navy/5 font-medium dark:border-arka-gold dark:bg-arka-gold/10;
+    @apply border-yellow-400 bg-yellow-200/90 font-semibold text-slate-950 shadow-sm
+      focus:border-amber-500 focus:ring-amber-400/40
+      dark:border-arka-gold dark:bg-amber-400/25 dark:text-amber-100 dark:focus:ring-arka-gold/30;
   }
 
   .btn {

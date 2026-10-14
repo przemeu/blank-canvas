@@ -1,9 +1,10 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import {
   Activity,
   BarChart3,
   CalendarRange,
+  ChevronDown,
   Crown,
   Flame,
   Goal,
@@ -20,7 +21,7 @@ import {
 } from "lucide-react";
 import type { Stats, Streak } from "@/lib/stats";
 import type { Match } from "@/lib/types";
-import { avg, fmtDate, fmtInt, pct, playersWord, signed } from "@/lib/format";
+import { avg, cn, fmtDate, fmtInt, pct, playersWord, plural, signed } from "@/lib/format";
 
 function Card({ title, icon, children, accent }: { title: string; icon: ReactNode; children: ReactNode; accent?: string }) {
   return (
@@ -90,6 +91,7 @@ function Bar({ w, d, l }: { w: number; d: number; l: number }) {
 }
 
 export default function StatsDashboard({ stats }: { stats: Stats }) {
+  const [open, setOpen] = useState(true);
   const s = stats;
   const n = s.total;
   const scorers =
@@ -108,8 +110,29 @@ export default function StatsDashboard({ stats }: { stats: Stats }) {
     );
 
   return (
-    <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      <Card title="Liczba meczów" icon={<Hash className="h-4 w-4" />}>
+    <section className="card overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={cn(
+          "flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-50/50 dark:hover:bg-slate-800/50",
+          open && "border-b border-slate-200 dark:border-slate-800"
+        )}
+      >
+        <span className="flex items-center gap-2 font-semibold text-arka-navy dark:text-arka-gold">
+          <BarChart3 className="h-4 w-4" />
+          Statystyki na żywo
+          <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300">
+            {fmtInt(n)} {plural(n, "mecz", "mecze", "meczów")}
+          </span>
+        </span>
+        <ChevronDown className={cn("h-5 w-5 text-slate-400 transition-transform", open && "rotate-180")} />
+      </button>
+
+      {open && (
+        <div className="animate-fade-in p-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <Card title="Liczba meczów" icon={<Hash className="h-4 w-4" />}>
         <div className="text-3xl font-black text-arka-navy dark:text-arka-gold">{fmtInt(n)}</div>
         <Row label="Dom">
           <V>{s.home}</V>
@@ -305,6 +328,9 @@ export default function StatsDashboard({ stats }: { stats: Stats }) {
           "–"
         )}
       </Card>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
