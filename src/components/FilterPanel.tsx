@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Filter, RotateCcw, Undo2, X } from "lucide-react";
 import type { Filters } from "@/lib/types";
-import { OWN_GOAL_QUERY, leagueOptionLabel, refereeOptionLabel } from "@/lib/parsing";
+import { leagueOptionLabel, refereeOptionLabel, scorerOptionLabel } from "@/lib/parsing";
 import { cn } from "@/lib/format";
 
 export interface FilterOptions {
@@ -10,6 +10,7 @@ export interface FilterOptions {
   leagues: string[];
   places: string[];
   referees: string[];
+  scorers: string[];
 }
 
 interface Props {
@@ -48,6 +49,11 @@ function Select({
         <option value="" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
           {placeholder}
         </option>
+        {value && !options.some((o) => o.value === value) && (
+          <option value={value} className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+            {value}
+          </option>
+        )}
         {options.map((o) => (
           <option key={o.value} value={o.value} className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
             {o.label}
@@ -193,12 +199,12 @@ export default function FilterPanel({ filters, options, activeCount, setFilter, 
               options={opt(options.referees, refereeOptionLabel)}
             />
             <TextFilter label="Zawodnik (skład)" placeholder="np. Marcjanik" value={filters.player} onCommit={(v, r) => setFilter("player", v, r)} />
-            <TextFilter
+            <Select
               label="Strzelec"
-              placeholder="np. Rusyn lub „samobójcze”"
+              placeholder="Wszyscy strzelcy"
               value={filters.scorer}
-              display={(v) => (v === OWN_GOAL_QUERY ? "Bramki samobójcze" : v)}
-              onCommit={(v, r) => setFilter("scorer", v, r)}
+              onChange={(v) => setFilter("scorer", v)}
+              options={opt(options.scorers, scorerOptionLabel)}
             />
             <TextFilter label="Minuta gola" placeholder="np. 90" value={filters.goal_minute} onCommit={(v, r) => setFilter("goal_minute", v, r)} />
             <TextFilter label="Kolejka" placeholder="np. 5 · 1, 3, 7 · 21-34 · PP" value={filters.kolejka} onCommit={(v, r) => setFilter("kolejka", v, r)} />

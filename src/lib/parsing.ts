@@ -199,6 +199,49 @@ export function extractScorerNames(scorers: string | null): string[] {
   return names;
 }
 
+/**
+ * Etykieta strzelca do listy rozwijanej z nazwiskiem na początku:
+ * "Karol Czubak" -> "Czubak Karol"
+ * Dzięki temu wpisanie litery na klawiaturze przenosi do pierwszego strzelca z nazwiskiem na tę literę (analogicznie do sędziów).
+ */
+export function scorerOptionLabel(name: string): string {
+  if (!name) return "";
+  if (name === OWN_GOAL_QUERY || name.toLowerCase() === "bramki samobójcze") {
+    return "Bramki samobójcze";
+  }
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    if (parts.length === 3 && (parts[1].toLowerCase() === "da" || parts[1].toLowerCase() === "de")) {
+      return `${parts[1]} ${parts[2]} ${parts[0]}`;
+    }
+    const surname = parts[parts.length - 1];
+    const firstNames = parts.slice(0, -1).join(" ");
+    return `${surname} ${firstNames}`;
+  }
+  return name;
+}
+
+/**
+ * Unikalna lista strzelców ze wszystkich meczów (do listy rozwijanej).
+ */
+export function extractUniqueScorers(matches: { strzelcy: string | null }[]): string[] {
+  const scorersSet = new Set<string>();
+  for (const m of matches) {
+    if (!m.strzelcy) continue;
+    for (const part of m.strzelcy.split(";")) {
+      const trimmed = part.trim();
+      if (!trimmed || (trimmed.startsWith("(") && trimmed.endsWith(")"))) continue;
+      const mt = MINUTE_TAIL.exec(trimmed);
+      let name = mt ? trimmed.slice(0, mt.index).trim() : trimmed;
+      name = name.replace(/\s*\(k\)/gi, "").replace(/^\(+|\)+$/g, "").trim();
+      if (name && !/^\d+$/.test(name) && name.toLowerCase() !== "walkower") {
+        scorersSet.add(name);
+      }
+    }
+  }
+  return [...scorersSet];
+}
+
 export type ScorerToken =
   | { type: "player"; text: string; scorer: string }
   | { type: "minute"; text: string; minute: string }
