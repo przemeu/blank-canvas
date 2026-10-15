@@ -1,6 +1,6 @@
-﻿import { useMemo, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowDown, ArrowUp, CalendarDays, ChevronLeft, ChevronRight, ClipboardList, Flag, Info, Timer, Users } from "lucide-react";
+import { ArrowLeft, ArrowDown, ArrowUp, Building2, CalendarDays, ChevronLeft, ChevronRight, ClipboardList, Flag, Info, Timer, Users } from "lucide-react";
 import { useData } from "@/context/AppContext";
 import { filterHref } from "@/hooks/useFilterParams";
 import type { Card, Match, SquadPlayer } from "@/lib/types";
@@ -76,7 +76,7 @@ function Timeline({ events }: { events: TimelineEvent[] }) {
   );
 }
 
-function Lineup({ team, players, align }: { team: string; players: SquadPlayer[]; align: "left" | "right" }) {
+function Lineup({ team, players, align, historicalName }: { team: string; players: SquadPlayer[]; align: "left" | "right"; historicalName?: string | null }) {
   const starters = players.filter((p) => p.status !== "on");
   const subs = players.filter((p) => p.status === "on");
   const Item = ({ p }: { p: SquadPlayer }) => (
@@ -100,9 +100,14 @@ function Lineup({ team, players, align }: { team: string; players: SquadPlayer[]
   );
   return (
     <div className="min-w-0">
-      <h4 className={cn("mb-2 flex items-center gap-2 font-bold text-arka-navy dark:text-arka-gold", align === "right" && "flex-row-reverse text-right")}>
+      <h4 className={cn("mb-2 flex flex-wrap items-center gap-2 font-bold text-arka-navy dark:text-arka-gold", align === "right" && "flex-row-reverse text-right")}>
         <TeamLogo team={team} />
         <span className="truncate">{team}</span>
+        {historicalName && (
+          <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
+            ({historicalName})
+          </span>
+        )}
       </h4>
       {players.length === 0 ? (
         <p className={cn("text-sm text-slate-500", align === "right" && "text-right")}>Brak danych o składzie.</p>
@@ -227,9 +232,16 @@ export default function MatchPage() {
                 {team === ARKA ? (
                   team
                 ) : (
-                  <Link to={filterHref("opponent", team)} className="hover:text-arka-gold">
-                    {team}
-                  </Link>
+                  <>
+                    <Link to={filterHref("opponent", team)} className="hover:text-arka-gold">
+                      {team}
+                    </Link>
+                    {match.historicalName && (
+                      <span className="mt-1 block text-xs font-normal text-amber-200/90 italic">
+                        Klub występował pod nazwą: {match.historicalName}
+                      </span>
+                    )}
+                  </>
                 )}
               </h2>
             </div>
@@ -266,6 +278,16 @@ export default function MatchPage() {
                 </dt>
                 <dd className="font-semibold">{fmtDate(match.fullDate)}</dd>
               </div>
+              {match.historicalName && (
+                <div className="flex items-center justify-between gap-3 rounded-lg bg-amber-500/10 p-2.5 text-amber-900 dark:text-amber-200">
+                  <dt className="flex items-center gap-2 font-medium text-amber-800 dark:text-amber-300">
+                    <Building2 className="h-4 w-4 shrink-0" /> Nazwa historyczna
+                  </dt>
+                  <dd className="font-semibold text-right">
+                    Klub występował pod nazwą: {match.historicalName}
+                  </dd>
+                </div>
+              )}
               {match.frekwencja ? (
                 <div className="flex items-center justify-between gap-3">
                   <dt className="flex items-center gap-2 text-slate-500">
@@ -307,8 +329,8 @@ export default function MatchPage() {
 
         <Section title="Składy" icon={<ClipboardList className="h-4 w-4" />}>
           <div className="grid grid-cols-2 gap-3 sm:gap-6">
-            <Lineup team={view.homeTeam} players={view.homeSquad} align="left" />
-            <Lineup team={view.awayTeam} players={view.awaySquad} align="right" />
+            <Lineup team={view.homeTeam} players={view.homeSquad} align="left" historicalName={view.homeTeam !== ARKA ? match.historicalName : null} />
+            <Lineup team={view.awayTeam} players={view.awaySquad} align="right" historicalName={view.awayTeam !== ARKA ? match.historicalName : null} />
           </div>
         </Section>
       </div>

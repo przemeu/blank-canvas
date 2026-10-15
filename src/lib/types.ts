@@ -39,6 +39,8 @@ export interface Match {
   goalsAgainst: number | null;
   /** Złączone, zapisane małymi literami nazwiska z obu składów – do wyszukiwania */
   squadSearch: string;
+  /** Nazwa historyczna/sponsorska rywala w tym konkretnym meczu */
+  historicalName?: string | null;
 }
 
 export type LogoMapping = Record<string, string | null>;

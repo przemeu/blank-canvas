@@ -99,6 +99,7 @@ export function decodePayload(payload: RawPayload): Match[] {
       goalsFor: score ? score[0] : null,
       goalsAgainst: score ? score[1] : null,
       squadSearch: [...skladArka, ...skladPrzeciwnika].map((p) => p.name).join("|").toLowerCase(),
+      historicalName: str("historicalName"),
     } satisfies Match;
   });
 }

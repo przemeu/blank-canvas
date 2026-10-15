@@ -47,6 +47,7 @@ COLUMNS = [
     "id", "sezon", "kolejka", "data", "rok", "liga", "miejsce", "przeciwnik",
     "wynik", "strzelcy", "frekwencja", "fullDate", "golPrzeciwnika",
     "skladArka", "skladPrzeciwnika", "sedzia", "kartkiArka", "kartkiPrzeciwnik",
+    "historicalName",
 ]
 DICT_COLUMNS = ["sezon", "kolejka", "liga", "miejsce", "przeciwnik", "sedzia"]
 
@@ -146,6 +147,13 @@ OPPONENT_MAPPINGS = {
     "Victoria": "Victoria Jaworzno",
     "Wierzyca Starogard": "Wierzyca Starogard Gdański",
     "Wierzyca Starogard Gd.": "Wierzyca Starogard Gdański",
+    "Hutnik Nowa Huta": "Hutnik Kraków",
+    "Hutnik Krakow": "Hutnik Kraków",
+    "Urania Kochłowice": "Urania Ruda Śląska",
+    "Gryf 95 Słupsk": "Gryf Słupsk",
+    "Bogdanka Łęczna": "Górnik Łęczna",
+    "Stasiak Opoczno": "Ceramika Opoczno",
+    "Aluminium Konin": "Górnik Konin",
 }
 
 
@@ -302,6 +310,7 @@ def export_matches() -> None:
             d("sedzia", clean_referee(r["sedzia"])),
             encode_cards(r["kartki_arka"], players),
             encode_cards(r["kartki_przeciwnik"], players),
+            clean_text(r["nazwa_historyczna"]) if "nazwa_historyczna" in r.keys() else None,
         ])
         while out_rows[-1] and out_rows[-1][-1] is None:
             out_rows[-1].pop()  # obcięcie końcowych wartości null

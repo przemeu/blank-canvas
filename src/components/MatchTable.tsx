@@ -1,4 +1,4 @@
-﻿import { memo, useEffect, useRef, useState, type ReactNode } from "react";
+import { memo, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import type { Filters, Match } from "@/lib/types";
@@ -100,7 +100,14 @@ const MatchRow = memo(function MatchRow({
       <td className="px-2 py-2">
         <div className="flex min-w-[170px] items-center gap-2">
           <TeamLogo team={m.przeciwnik} />
-          <Cell onClick={() => jumpTo("opponent", m.przeciwnik)}>{m.przeciwnik}</Cell>
+          <div className="min-w-0">
+            <Cell onClick={() => jumpTo("opponent", m.przeciwnik)}>{m.przeciwnik}</Cell>
+            {m.historicalName && (
+              <span className="block text-[11px] text-slate-500 dark:text-slate-400 italic">
+                wyst. jako: {m.historicalName}
+              </span>
+            )}
+          </div>
         </div>
       </td>
       <td className="whitespace-nowrap px-2 py-2 text-center">
