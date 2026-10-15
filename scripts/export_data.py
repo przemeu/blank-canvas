@@ -113,6 +113,36 @@ def clean_referee(value):
     return REFEREE_MAPPINGS.get(text, text)
 
 
+OPPONENT_MAPPINGS = {
+    "Gornik Zabrze": "Górnik Zabrze",
+    "Błękitni Sardgard": "Błękitni Stargard",
+    "Błękitni Starogard": "Błękitni Stargard",
+    "Celuloza Kostrzyń": "Celuloza Kostrzyn",
+    "Flota Swinoujscie": "Flota Świnoujście",
+    "Flota Świnujście": "Flota Świnoujście",
+    "Gryf Slupsk": "Gryf Słupsk",
+    "Legia Chełmżą": "Legia Chełmża",
+    "Obra Koscian": "Obra Kościan",
+    "Rodło Kwidzyń": "Rodło Kwidzyn",
+    "Stal Mielce": "Stal Mielec",
+    "Szombierski Bytom": "Szombierki Bytom",
+    "Urania Ruda Ślaska": "Urania Ruda Śląska",
+    "Wisla Tczew": "Wisła Tczew",
+    "Zagłebie Wałbrzych": "Zagłębie Wałbrzych",
+    "FAM Chelmno": "FAM Chełmno",
+    "stadion Arki Gedania Gdańsk": "Gedania Gdańsk",
+    "w Sztumie Powiśle Czernin": "Powiśle Czernin",
+    "ŁKS Łódź": "Łódzki KS",
+}
+
+
+def clean_opponent(value):
+    text = clean_text(value)
+    if not text:
+        return None
+    return OPPONENT_MAPPINGS.get(text, text)
+
+
 # --------------------------------------------------------------------------- #
 # Słowniki
 # --------------------------------------------------------------------------- #
@@ -248,7 +278,7 @@ def export_matches() -> None:
             rok,
             d("liga", clean_text(r["Liga"])),
             d("miejsce", clean_place(r["Miejsce"])),
-            d("przeciwnik", clean_text(r["Przeciwnik"])),
+            d("przeciwnik", clean_opponent(r["Przeciwnik"])),
             score,
             clean_text(r["Strzelcy"]),
             clean_attendance(r["Frekwencja"]),
