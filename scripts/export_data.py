@@ -133,6 +133,19 @@ OPPONENT_MAPPINGS = {
     "stadion Arki Gedania Gdańsk": "Gedania Gdańsk",
     "w Sztumie Powiśle Czernin": "Powiśle Czernin",
     "ŁKS Łódź": "Łódzki KS",
+    "Błękitni Stargard Szczeciński": "Błękitni Stargard",
+    "Kaliski KS": "Kaliski KS Kalisz",
+    "Moto Jelcz": "Moto Jelcz Oława",
+    "Odra Wodzisław": "Odra Wodzisław Śląski",
+    "Orkan": "Orkan Gdynia",
+    "Ostrovia Ostrów": "Ostrovia Ostrów Wlkp.",
+    "Radomiak": "Radomiak Radom",
+    "Stal Stocznia": "Stal Stocznia Szczecin",
+    "Stilon Gorzów": "Stilon Gorzów Wlkp.",
+    "Szombierki": "Szombierki Bytom",
+    "Victoria": "Victoria Jaworzno",
+    "Wierzyca Starogard": "Wierzyca Starogard Gdański",
+    "Wierzyca Starogard Gd.": "Wierzyca Starogard Gdański",
 }
 
 
