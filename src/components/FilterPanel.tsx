@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Filter, RotateCcw, Undo2, X } from "lucide-react";
 import type { Filters } from "@/lib/types";
-import { leagueOptionLabel, scorerOptionLabel } from "@/lib/parsing";
+import { leagueOptionLabel, refereeSortKey, scorerOptionLabel, scorerSortKey } from "@/lib/parsing";
 import { cn } from "@/lib/format";
+import ComboboxSelect from "./ComboboxSelect";
 
 export interface FilterOptions {
   seasons: string[];
@@ -150,6 +151,21 @@ export default function FilterPanel({ filters, options, activeCount, setFilter, 
   const [open, setOpen] = useState(true);
   const opt = (arr: string[], label?: (v: string) => string) => arr.map((v) => ({ value: v, label: label ? label(v) : v }));
 
+  const refereeOptions = useMemo(
+    () => options.referees.map((r) => ({ value: r, label: r, sortKey: refereeSortKey(r) })),
+    [options.referees]
+  );
+
+  const scorerOptions = useMemo(
+    () =>
+      options.scorers.map((s) => ({
+        value: s,
+        label: scorerOptionLabel(s),
+        sortKey: scorerSortKey(s),
+      })),
+    [options.scorers]
+  );
+
   return (
     <section className="card overflow-hidden">
       <button
@@ -191,20 +207,20 @@ export default function FilterPanel({ filters, options, activeCount, setFilter, 
             />
             <TextFilter label="Dokładny wynik" placeholder="np. 1:1, 2:0" value={filters.result} onCommit={(v, r) => setFilter("result", v, r)} />
             <Select label="Miejsce" placeholder="Wszystkie" value={filters.place} onChange={(v) => setFilter("place", v)} options={opt(options.places)} />
-            <Select
+            <ComboboxSelect
               label="Sędzia"
               placeholder="Wszyscy sędziowie"
               value={filters.referee}
               onChange={(v) => setFilter("referee", v)}
-              options={opt(options.referees)}
+              options={refereeOptions}
             />
             <TextFilter label="Zawodnik (skład)" placeholder="np. Marcjanik" value={filters.player} onCommit={(v, r) => setFilter("player", v, r)} />
-            <Select
+            <ComboboxSelect
               label="Strzelec"
               placeholder="Wszyscy strzelcy"
               value={filters.scorer}
               onChange={(v) => setFilter("scorer", v)}
-              options={opt(options.scorers, scorerOptionLabel)}
+              options={scorerOptions}
             />
             <TextFilter label="Minuta gola" placeholder="np. 90" value={filters.goal_minute} onCommit={(v, r) => setFilter("goal_minute", v, r)} />
             <TextFilter label="Kolejka" placeholder="np. 5 · 1, 3, 7 · 21-34 · PP" value={filters.kolejka} onCommit={(v, r) => setFilter("kolejka", v, r)} />
