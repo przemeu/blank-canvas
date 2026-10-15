@@ -365,19 +365,23 @@ export default function StatsDashboard({ stats }: { stats: Stats }) {
         {s.worstReferee ? (
           <>
             <div className="font-semibold">{s.worstReferee.name}</div>
-            <Row label="Punkty">
-              <V>
-                {s.worstReferee.points}/{s.worstReferee.possiblePoints}
-              </V>{" "}
-              <span className="text-xs text-slate-500">({s.worstReferee.pointsPct.toFixed(1)}%)</span>
+            <Row label="Porażki">
+              <V>{s.worstReferee.losses}</V>{" "}
+              <span className="text-xs text-slate-500">
+                (z {s.worstReferee.games} {plural(s.worstReferee.games, "meczu", "meczów", "meczów")})
+              </span>
             </Row>
             <Row label="Bilans W-R-P">
               <V>
                 {s.worstReferee.wins}-{s.worstReferee.draws}-{s.worstReferee.losses}
               </V>{" "}
-              <span className="text-xs text-slate-500">
-                ({s.worstReferee.games} {plural(s.worstReferee.games, "mecz", "mecze", "meczów")})
-              </span>
+              <span className="text-xs text-slate-500">({s.worstReferee.points} pkt)</span>
+            </Row>
+            <Row label="Punkty">
+              <V>
+                {s.worstReferee.points}/{s.worstReferee.possiblePoints}
+              </V>{" "}
+              <span className="text-xs text-slate-500">({s.worstReferee.pointsPct.toFixed(1)}%)</span>
             </Row>
             <Row label="Bramki">
               <V>

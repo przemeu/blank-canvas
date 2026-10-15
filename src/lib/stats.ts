@@ -338,7 +338,7 @@ export function computeStats(input: Match[]): Stats {
   s.bestOpponent = best;
   s.worstOpponent = worst;
 
-  // Ulubiony i znienawidzony sędzia: punkty zdobyte na możliwe
+  // Ulubiony i znienawidzony sędzia
   let bestRef: RefereeRecord | null = null;
   let worstRef: RefereeRecord | null = null;
   const refList = Array.from(referees.values());
@@ -352,6 +352,7 @@ export function computeStats(input: Match[]): Stats {
       worstRef = single;
     }
   } else if (refList.length > 1) {
+    // Ulubiony sędzia: punkty zdobyte na możliwe (procent punktów)
     let cands = refList;
     for (const minG of [3, 2, 1]) {
       const f = refList.filter((r) => r.games >= minG);
@@ -368,16 +369,21 @@ export function computeStats(input: Match[]): Stats {
         b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
         a.name.localeCompare(b.name)
     );
-    const sortedWorst = [...cands].sort(
-      (a, b) =>
-        a.pointsPct - b.pointsPct ||
-        b.games - a.games ||
-        b.losses - a.losses ||
-        a.goalsFor - a.goalsAgainst - (b.goalsFor - b.goalsAgainst) ||
-        a.name.localeCompare(b.name)
-    );
     bestRef = sortedBest[0] ?? null;
-    worstRef = sortedWorst[0] ?? null;
+
+    // Najgorszy sędzia: wybierany przez liczbę porażek (najwięcej porażek), potem bilans
+    const withLosses = refList.filter((r) => r.losses > 0);
+    if (withLosses.length > 0) {
+      const sortedWorst = [...withLosses].sort(
+        (a, b) =>
+          b.losses - a.losses ||
+          a.pointsPct - b.pointsPct ||
+          a.goalsFor - a.goalsAgainst - (b.goalsFor - b.goalsAgainst) ||
+          b.games - a.games ||
+          a.name.localeCompare(b.name)
+      );
+      worstRef = sortedWorst[0] ?? null;
+    }
 
     if (bestRef && worstRef && bestRef.name === worstRef.name) {
       if (bestRef.pointsPct > 50) {
