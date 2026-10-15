@@ -5,7 +5,7 @@ import { cn } from "@/lib/format";
 export interface ComboboxOption {
   value: string;
   label: string;
-  sortKey: string;
+  sortKey?: string;
 }
 
 interface Props {
@@ -14,6 +14,7 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   options: ComboboxOption[];
+  highlightSurname?: boolean;
 }
 
 function normalize(str: string): string {
@@ -32,11 +33,11 @@ function getInitialLetter(sortKey: string): string {
 }
 
 /**
- * Wyświetla etykietę: imię zwykłą czcionką, nazwisko pogrubione.
+ * Wyświetla etykietę: imię zwykłą czcionką, nazwisko pogrubione (jeśli highlightSurname jest włączone).
  */
-function renderOptionContent(label: string) {
-  if (!label || label.startsWith("(") || label === "Bramki samobójcze") {
-    return <span className="font-medium">{label}</span>;
+function renderOptionContent(label: string, highlightSurname?: boolean) {
+  if (!highlightSurname || !label || label.startsWith("(") || label === "Bramki samobójcze") {
+    return <span className="font-medium text-slate-800 dark:text-slate-100">{label}</span>;
   }
   const matchCity = /^(.*?)\s*(\(.*?\))$/.exec(label.trim());
   const fullName = matchCity ? matchCity[1].trim() : label.trim();
@@ -74,7 +75,7 @@ function renderOptionContent(label: string) {
   );
 }
 
-export default function ComboboxSelect({ label, placeholder, value, onChange, options }: Props) {
+export default function ComboboxSelect({ label, placeholder, value, onChange, options, highlightSurname }: Props) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -83,13 +84,16 @@ export default function ComboboxSelect({ label, placeholder, value, onChange, op
   const searchInputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
+  // Wyszukiwanie jest aktywne dla list z więcej niż 5 pozycjami
+  const showSearch = options.length > 5;
+
   // Filtrowanie opcji po query
   const filteredOptions = useMemo(() => {
     if (!query.trim()) return options;
     const qNorm = normalize(query.trim());
     return options.filter((o) => {
       const lNorm = normalize(o.label);
-      const sNorm = normalize(o.sortKey || "");
+      const sNorm = normalize(o.sortKey || o.label);
       return lNorm.includes(qNorm) || sNorm.includes(qNorm);
     });
   }, [options, query]);
@@ -110,16 +114,18 @@ export default function ComboboxSelect({ label, placeholder, value, onChange, op
     }
   }, [open]);
 
-  // Po otwarciu reset wyszukiwania i focus na input
+  // Po otwarciu reset wyszukiwania i ewentualny focus na input
   useEffect(() => {
     if (open) {
       setQuery("");
       setHighlightedIndex(0);
-      setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 50);
+      if (showSearch) {
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+        }, 50);
+      }
     }
-  }, [open]);
+  }, [open, showSearch]);
 
   // Przewijanie do podświetlonej pozycji
   useEffect(() => {
@@ -132,7 +138,7 @@ export default function ComboboxSelect({ label, placeholder, value, onChange, op
     }
   }, [highlightedIndex, open]);
 
-  // Klawiatura na zamkniętym przycisku (bezpośredni wybór po naciśnięciu litery nazwiska)
+  // Klawiatura na zamkniętym przycisku (bezpośredni wybór po naciśnięciu litery)
   const handleTriggerKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
       e.preventDefault();
@@ -144,7 +150,7 @@ export default function ComboboxSelect({ label, placeholder, value, onChange, op
       e.preventDefault();
       const pressed = normalize(e.key);
       const match = options.find((o) => {
-        const keyNorm = normalize(o.sortKey || "");
+        const keyNorm = normalize(o.sortKey || o.label);
         return keyNorm.startsWith(pressed);
       });
       if (match) {
@@ -153,8 +159,8 @@ export default function ComboboxSelect({ label, placeholder, value, onChange, op
     }
   };
 
-  // Klawiatura wewnątrz pola wyszukiwania
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  // Klawiatura wewnątrz otwartego dropdownu
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLDivElement>) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setHighlightedIndex((prev) => (prev < filteredOptions.length ? prev + 1 : prev));
@@ -237,28 +243,34 @@ export default function ComboboxSelect({ label, placeholder, value, onChange, op
         </div>
       </button>
 
-      {/* Rozwijane menu z alfabetem i listą */}
+      {/* Rozwijane menu wydłużone do 170% (max-h-[500px] dla panelu, max-h-[380px] dla listy) */}
       {open && (
-        <div className="absolute left-0 right-0 top-full z-[100] mt-1 max-h-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
-          {/* Szybkie wyszukiwanie */}
-          <div className="relative border-b border-slate-100 p-2 dark:border-slate-800">
-            <Search className="absolute left-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setHighlightedIndex(0);
-              }}
-              onKeyDown={handleSearchKeyDown}
-              placeholder="Wpisz nazwisko lub imię…"
-              className="h-8 w-full rounded-md bg-slate-50 pl-8 pr-3 text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-arka-navy dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-arka-gold"
-            />
-          </div>
+        <div
+          tabIndex={-1}
+          onKeyDown={!showSearch ? handleSearchKeyDown : undefined}
+          className="absolute left-0 right-0 top-full z-[100] mt-1 max-h-[500px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900"
+        >
+          {/* Szybkie wyszukiwanie (tylko gdy opcji > 5) */}
+          {showSearch && (
+            <div className="relative border-b border-slate-100 p-2 dark:border-slate-800">
+              <Search className="absolute left-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setHighlightedIndex(0);
+                }}
+                onKeyDown={handleSearchKeyDown}
+                placeholder="Wpisz aby przefiltrować…"
+                className="h-8 w-full rounded-md bg-slate-50 pl-8 pr-3 text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-arka-navy dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-arka-gold"
+              />
+            </div>
+          )}
 
-          {/* Lista pozycji */}
-          <ul ref={listRef} className="max-h-56 overflow-y-auto py-1 text-xs" role="listbox">
+          {/* Lista pozycji o wysokości wydłużonej do 170% (max-h-[380px]) */}
+          <ul ref={listRef} className="max-h-[380px] overflow-y-auto py-1 text-xs" role="listbox">
             {!query && (
               <li
                 role="option"
@@ -285,16 +297,19 @@ export default function ComboboxSelect({ label, placeholder, value, onChange, op
                 const isSelected = opt.value === value;
                 const isHighlighted = itemIndex === highlightedIndex;
 
-                // Sprawdź czy pokazać separator litery
+                // Nagłówek litery tylko gdy opcji jest sporo (> 15) i mają zróżnicowane litery
                 const prevOpt = idx > 0 ? filteredOptions[idx - 1] : null;
-                const currLetter = getInitialLetter(opt.sortKey);
-                const prevLetter = prevOpt ? getInitialLetter(prevOpt.sortKey) : null;
-                const showHeader = !query && currLetter !== "#" && currLetter !== prevLetter;
+                const currKey = opt.sortKey || opt.label;
+                const prevKey = prevOpt ? prevOpt.sortKey || prevOpt.label : null;
+                const currLetter = getInitialLetter(currKey);
+                const prevLetter = prevKey ? getInitialLetter(prevKey) : null;
+                const showHeader =
+                  highlightSurname && !query && currLetter !== "#" && currLetter !== prevLetter && options.length > 15;
 
                 return (
                   <div key={opt.value}>
                     {showHeader && (
-                      <div className="sticky top-0 z-10 bg-slate-100/90 px-3 py-0.5 text-[10px] font-bold uppercase text-slate-500 backdrop-blur dark:bg-slate-800/90 dark:text-slate-400">
+                      <div className="sticky top-0 z-10 bg-slate-100/95 px-3 py-0.5 text-[10px] font-bold uppercase text-slate-500 backdrop-blur dark:bg-slate-800/95 dark:text-slate-400">
                         {currLetter}
                       </div>
                     )}
@@ -308,7 +323,7 @@ export default function ComboboxSelect({ label, placeholder, value, onChange, op
                         isHighlighted && !isSelected && "bg-slate-50 dark:bg-slate-800/50"
                       )}
                     >
-                      <div className="truncate">{renderOptionContent(opt.label)}</div>
+                      <div className="truncate">{renderOptionContent(opt.label, highlightSurname)}</div>
                       {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-amber-800 dark:text-arka-gold" />}
                     </li>
                   </div>

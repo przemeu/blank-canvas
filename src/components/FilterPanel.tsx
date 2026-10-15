@@ -23,47 +23,7 @@ interface Props {
   goBack: () => void;
 }
 
-function Select({
-  value,
-  onChange,
-  placeholder,
-  options,
-  label,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  placeholder: string;
-  options: { value: string; label: string }[];
-  label: string;
-}) {
-  return (
-    <label className="block">
-      <span
-        className={cn(
-          "mb-1 block text-[11px] font-semibold uppercase tracking-wide",
-          value ? "text-amber-800 font-bold dark:text-arka-gold" : "text-slate-500 dark:text-slate-400"
-        )}
-      >
-        {label}
-      </span>
-      <select className={cn("field pr-8", value && "field-active")} value={value} onChange={(e) => onChange(e.target.value)}>
-        <option value="" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
-          {placeholder}
-        </option>
-        {value && !options.some((o) => o.value === value) && (
-          <option value={value} className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
-            {value}
-          </option>
-        )}
-        {options.map((o) => (
-          <option key={o.value} value={o.value} className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
-            {o.label}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
-}
+
 
 /** Pole tekstowe z opóźnionym (debounce) zatwierdzaniem – filtrowanie na żywo bez zaśmiecania historii. */
 function TextFilter({
@@ -149,7 +109,17 @@ function TextFilter({
 
 export default function FilterPanel({ filters, options, activeCount, setFilter, clearAll, goBack }: Props) {
   const [open, setOpen] = useState(true);
-  const opt = (arr: string[], label?: (v: string) => string) => arr.map((v) => ({ value: v, label: label ? label(v) : v }));
+  const seasonOptions = useMemo(() => options.seasons.map((s) => ({ value: s, label: s })), [options.seasons]);
+  const opponentOptions = useMemo(() => options.opponents.map((o) => ({ value: o, label: o })), [options.opponents]);
+  const leagueOptions = useMemo(
+    () => options.leagues.map((l) => ({ value: l, label: leagueOptionLabel(l) })),
+    [options.leagues]
+  );
+  const resultOptions = useMemo(
+    () => ["Wygrana", "Remis", "Porażka"].map((w) => ({ value: w, label: w })),
+    []
+  );
+  const placeOptions = useMemo(() => options.places.map((p) => ({ value: p, label: p })), [options.places]);
 
   const refereeOptions = useMemo(
     () => options.referees.map((r) => ({ value: r, label: r, sortKey: refereeSortKey(r) })),
@@ -164,6 +134,14 @@ export default function FilterPanel({ filters, options, activeCount, setFilter, 
         sortKey: scorerSortKey(s),
       })),
     [options.scorers]
+  );
+
+  const sortOptions = useMemo(
+    () => [
+      { value: "", label: "Od najstarszych" },
+      { value: "desc", label: "Od najnowszych" },
+    ],
+    []
   );
 
   return (
@@ -189,30 +167,49 @@ export default function FilterPanel({ filters, options, activeCount, setFilter, 
       {open && (
         <div className="animate-fade-in p-4 overflow-visible">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6">
-            <Select label="Sezon" placeholder="Wszystkie sezony" value={filters.season} onChange={(v) => setFilter("season", v)} options={opt(options.seasons)} />
-            <Select label="Przeciwnik" placeholder="Wszyscy rywale" value={filters.opponent} onChange={(v) => setFilter("opponent", v)} options={opt(options.opponents)} />
-            <Select
+            <ComboboxSelect
+              label="Sezon"
+              placeholder="Wszystkie sezony"
+              value={filters.season}
+              onChange={(v) => setFilter("season", v)}
+              options={seasonOptions}
+            />
+            <ComboboxSelect
+              label="Przeciwnik"
+              placeholder="Wszyscy rywale"
+              value={filters.opponent}
+              onChange={(v) => setFilter("opponent", v)}
+              options={opponentOptions}
+            />
+            <ComboboxSelect
               label="Liga / rozgrywki"
               placeholder="Wszystkie rozgrywki"
               value={filters.league}
               onChange={(v) => setFilter("league", v)}
-              options={opt(options.leagues, leagueOptionLabel)}
+              options={leagueOptions}
             />
-            <Select
+            <ComboboxSelect
               label="Wynik"
               placeholder="Dowolny"
               value={filters.wynik}
               onChange={(v) => setFilter("wynik", v)}
-              options={opt(["Wygrana", "Remis", "Porażka"])}
+              options={resultOptions}
             />
             <TextFilter label="Dokładny wynik" placeholder="np. 1:1, 2:0" value={filters.result} onCommit={(v, r) => setFilter("result", v, r)} />
-            <Select label="Miejsce" placeholder="Wszystkie" value={filters.place} onChange={(v) => setFilter("place", v)} options={opt(options.places)} />
+            <ComboboxSelect
+              label="Miejsce"
+              placeholder="Wszystkie"
+              value={filters.place}
+              onChange={(v) => setFilter("place", v)}
+              options={placeOptions}
+            />
             <ComboboxSelect
               label="Sędzia"
               placeholder="Wszyscy sędziowie"
               value={filters.referee}
               onChange={(v) => setFilter("referee", v)}
               options={refereeOptions}
+              highlightSurname
             />
             <TextFilter label="Zawodnik (skład)" placeholder="np. Marcjanik" value={filters.player} onCommit={(v, r) => setFilter("player", v, r)} />
             <ComboboxSelect
@@ -221,6 +218,7 @@ export default function FilterPanel({ filters, options, activeCount, setFilter, 
               value={filters.scorer}
               onChange={(v) => setFilter("scorer", v)}
               options={scorerOptions}
+              highlightSurname
             />
             <TextFilter label="Minuta gola" placeholder="np. 90" value={filters.goal_minute} onCommit={(v, r) => setFilter("goal_minute", v, r)} />
             <TextFilter label="Kolejka" placeholder="np. 5 · 1, 3, 7 · 21-34 · PP" value={filters.kolejka} onCommit={(v, r) => setFilter("kolejka", v, r)} />
@@ -228,12 +226,12 @@ export default function FilterPanel({ filters, options, activeCount, setFilter, 
             <TextFilter label="Data od" placeholder="rrrr/mm, np. 2017/05" value={filters.from_date} onCommit={(v, r) => setFilter("from_date", v, r)} />
             <TextFilter label="Data do" placeholder="rrrr/mm, np. 2025/01" value={filters.to_date} onCommit={(v, r) => setFilter("to_date", v, r)} />
             <TextFilter label="Rok" placeholder="np. 1979" value={filters.rok} onCommit={(v, r) => setFilter("rok", v, r)} />
-            <Select
+            <ComboboxSelect
               label="Sortowanie"
               placeholder="Od najstarszych"
               value={filters.sort_order === "desc" ? "desc" : ""}
               onChange={(v) => setFilter("sort_order", v || "asc")}
-              options={[{ value: "desc", label: "Od najnowszych" }]}
+              options={sortOptions}
             />
           </div>
 
