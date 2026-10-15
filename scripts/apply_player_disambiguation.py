@@ -246,36 +246,46 @@ RULES = [
     # 13. Guilherme
     (
         "Guilherme",
-        "Guilherme I",
+        "Guilherme Marques",
         lambda mid, d, opp: "Legia" in opp
     ),
     (
         "Guilherme",
-        "Guilherme II",
+        "Guilherme Sityá",
         lambda mid, d, opp: "Legia" not in opp
     ),
 
-    # 14. Leândro
+    # 14. Leândro / Leandro
     (
         "Leândro",
-        "Leândro I",
+        "Leandro Messias",
         lambda mid, d, opp: "Łęczna" in opp or "Górnik" in opp
     ),
     (
         "Leândro",
-        "Leândro II",
+        "Leandro Rossi",
+        lambda mid, d, opp: "Radomiak" in opp
+    ),
+    (
+        "Leandro",
+        "Leandro Messias",
+        lambda mid, d, opp: "Łęczna" in opp or "Górnik" in opp
+    ),
+    (
+        "Leandro",
+        "Leandro Rossi",
         lambda mid, d, opp: "Radomiak" in opp
     ),
 
     # 15. Thiago
     (
         "Thiago",
-        "Thiago I",
+        "Thiago Gomes",
         lambda mid, d, opp: "Pogoń" in opp
     ),
     (
         "Thiago",
-        "Thiago II",
+        "Thiago Rodrigues",
         lambda mid, d, opp: "Pogoń" not in opp
     ),
 ]

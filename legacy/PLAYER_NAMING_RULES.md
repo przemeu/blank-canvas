@@ -65,17 +65,21 @@ Gdy dwóch różnych zawodników rywali nosi to samo imię i nazwisko (np. z ró
 12. **Jerzy Kruszczyński**:
     - `Jerzy Kruszczyński I`: Lechia Gdańsk (1972–1973)
     - `Jerzy Kruszczyński II`: Lechia Gdańsk (1983–1984)
-13. **Guilherme**:
-    - `Guilherme I`: Legia Warszawa (2016–2017, pomocnik)
-    - `Guilherme II`: Bruk-Bet Termalica & Jagiellonia Białystok (2016–2026, obrońca)
-14. **Leândro**:
-    - `Leândro I`: Górnik Łęczna (2016–2021, Leândro Messias dos Santos)
-    - `Leândro II`: Radomiak Radom (2020–2026, Leândro Rossi Pereira)
-15. **Thiago**:
-    - `Thiago I`: Pogoń Szczecin (2007)
-    - `Thiago II`: Cracovia & Stal Stalowa Wola (2020–2024, Thiago Rodrigues de Souza)
+---
+
+## 3. Zawodnicy brazylijscy (zamiast numeracji rzymskiej – imię i nazwisko / przydomek)
+W przypadku zawodników brazylijskich występujących w polskich klubach pod pojedynczymi imionami lub pseudonimami (np. Leandro, Guilherme, Thiago), **zamiast numeracji rzymskiej stosujemy ich pełniejsze imiona i nazwiska / przydomki**:
+1. **Leandro**:
+   - `Leandro Messias`: Górnik Łęczna (2016–2021, Leândro Messias dos Santos)
+   - `Leandro Rossi`: Radomiak Radom (2020–2026, Leândro Rossi Pereira)
+2. **Guilherme**:
+   - `Guilherme Marques`: Legia Warszawa (2016–2017, Guilherme Costa Marques)
+   - `Guilherme Sityá`: Bruk-Bet Termalica & Jagiellonia Białystok (2016–2026, Guilherme Haubert Sityá)
+3. **Thiago**:
+   - `Thiago Gomes`: Pogoń Szczecin (2007, Thiago Gomes de Oliveira)
+   - `Thiago Rodrigues`: Cracovia & Stal Stalowa Wola (2020–2024, Thiago Rodrigues de Souza)
 
 ---
 
-## 3. Marcus da Silva
+## 4. Marcus da Silva
 - Zawsze używaj zapisu `Marcus da Silva` (zamiast `Marcus`, `Marcus Vinicius` czy `Marcus Vinícius`) we wszystkich tabelach bazy danych (`Kalendarium.db`), składach (`sklad_arka`), strzelcach (`Strzelcy`), kartkach (`kartki_arka`) oraz we wszelkich skryptach scrapujących i walidujących.
