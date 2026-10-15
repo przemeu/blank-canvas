@@ -208,7 +208,10 @@ export function extractScorerNames(scorers: string | null): string[] {
       last = null;
       continue;
     }
-    const name = (m ? part.slice(0, m.index) : part).replace(/^\(+|\)+$/g, "").trim();
+    const name = (m ? part.slice(0, m.index) : part)
+      .replace(/\s*\(k\)/gi, "")
+      .replace(/^\(+|\)+$/g, "")
+      .trim();
     if (name) {
       names.push(name);
       last = name;
