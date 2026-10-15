@@ -6,7 +6,7 @@ import { useFilterParams } from "@/hooks/useFilterParams";
 import { applyFilters, countActiveFilters, sortMatches } from "@/lib/filters";
 import { computeStats } from "@/lib/stats";
 import { exportMatchesToXlsx } from "@/lib/export";
-import { LEAGUE_ORDER, refereeOptionLabel, seasonStartYear } from "@/lib/parsing";
+import { LEAGUE_ORDER, compareOpponents, refereeOptionLabel, seasonStartYear } from "@/lib/parsing";
 import { plural } from "@/lib/format";
 import FilterPanel, { type FilterOptions } from "@/components/FilterPanel";
 import StatsDashboard from "@/components/StatsDashboard";
@@ -27,7 +27,7 @@ export default function ResultsPage() {
     const leagues = uniq((m) => m.liga);
     return {
       seasons: uniq((m) => m.sezon).sort((a, b) => (seasonStartYear(b) ?? 0) - (seasonStartYear(a) ?? 0) || collator.compare(b, a)),
-      opponents: uniq((m) => m.przeciwnik).sort(collator.compare),
+      opponents: uniq((m) => m.przeciwnik).sort((a, b) => compareOpponents(a, b, collator)),
       leagues: leagues.sort((a, b) => {
         const ia = LEAGUE_ORDER.indexOf(a);
         const ib = LEAGUE_ORDER.indexOf(b);

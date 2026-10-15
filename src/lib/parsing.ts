@@ -76,6 +76,29 @@ export function refereeOptionLabel(ref: string): string {
   return ref;
 }
 
+const RESERVE_REGEX = /\s+(II|III)(\s+|$)/;
+
+/**
+ * Sortowanie rywali z uwzględnieniem pierwszej drużyny przed rezerwami (np. Lechia Gdańsk przed Lechia II Gdańsk).
+ */
+export function compareOpponents(a: string, b: string, collator: Intl.Collator): number {
+  const matchA = RESERVE_REGEX.exec(a);
+  const matchB = RESERVE_REGEX.exec(b);
+
+  const tierA = matchA ? (matchA[1] === "II" ? 2 : 3) : 1;
+  const tierB = matchB ? (matchB[1] === "II" ? 2 : 3) : 1;
+
+  const baseA = matchA ? a.replace(RESERVE_REGEX, "$2").trim() : a;
+  const baseB = matchB ? b.replace(RESERVE_REGEX, "$2").trim() : b;
+
+  const baseCmp = collator.compare(baseA, baseB);
+  if (baseCmp !== 0) return baseCmp;
+
+  if (tierA !== tierB) return tierA - tierB;
+
+  return collator.compare(a, b);
+}
+
 export const LEAGUE_ORDER = ["I", "II", "III", "IV", "V", "VI", "PP", "PL", "PE", "SP", "B"];
 
 /** Krótka etykieta kolejki do tabeli. */
