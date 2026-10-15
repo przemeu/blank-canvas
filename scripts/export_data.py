@@ -134,6 +134,8 @@ OPPONENT_MAPPINGS = {
     "stadion Arki Gedania Gdańsk": "Gedania Gdańsk",
     "w Sztumie Powiśle Czernin": "Powiśle Czernin",
     "ŁKS Łódź": "Łódzki KS",
+    "Łódzki KS II Łódź": "Łódzki KS II",
+    "ŁKS II Łódź": "Łódzki KS II",
     "Błękitni Stargard Szczeciński": "Błękitni Stargard",
     "Kaliski KS": "Kaliski KS Kalisz",
     "Moto Jelcz": "Moto Jelcz Oława",
@@ -155,6 +157,7 @@ OPPONENT_MAPPINGS = {
     "Stasiak Opoczno": "Ceramika Opoczno",
     "Aluminium Konin": "Górnik Konin",
     "Lechia/Polonia II Gdańsk": "Lechia II Gdańsk",
+    "Lignomat/Polonia Jankowy": "Lignomat Jankowy",
 }
 
 
