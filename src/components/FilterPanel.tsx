@@ -167,13 +167,13 @@ export default function FilterPanel({ filters, options, activeCount, setFilter, 
   );
 
   return (
-    <section className="card overflow-hidden">
+    <section className="card relative z-30 overflow-visible">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-50/50 dark:hover:bg-slate-800/50",
-          open && "border-b border-slate-200 dark:border-slate-800"
+          "flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-50/50 dark:hover:bg-slate-800/50 rounded-2xl",
+          open && "rounded-b-none border-b border-slate-200 dark:border-slate-800"
         )}
       >
         <span className="flex items-center gap-2 font-semibold text-arka-navy dark:text-arka-gold">
@@ -187,7 +187,7 @@ export default function FilterPanel({ filters, options, activeCount, setFilter, 
       </button>
 
       {open && (
-        <div className="animate-fade-in p-4">
+        <div className="animate-fade-in p-4 overflow-visible">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6">
             <Select label="Sezon" placeholder="Wszystkie sezony" value={filters.season} onChange={(v) => setFilter("season", v)} options={opt(options.seasons)} />
             <Select label="Przeciwnik" placeholder="Wszyscy rywale" value={filters.opponent} onChange={(v) => setFilter("opponent", v)} options={opt(options.opponents)} />

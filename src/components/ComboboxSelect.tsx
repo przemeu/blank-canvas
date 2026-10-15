@@ -195,7 +195,7 @@ export default function ComboboxSelect({ label, placeholder, value, onChange, op
   };
 
   return (
-    <div className="relative block" ref={containerRef}>
+    <div className={cn("relative block", open ? "z-50" : "z-10")} ref={containerRef}>
       <span
         className={cn(
           "mb-1 block text-[11px] font-semibold uppercase tracking-wide",
@@ -239,7 +239,7 @@ export default function ComboboxSelect({ label, placeholder, value, onChange, op
 
       {/* Rozwijane menu z alfabetem i listą */}
       {open && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+        <div className="absolute left-0 right-0 top-full z-[100] mt-1 max-h-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
           {/* Szybkie wyszukiwanie */}
           <div className="relative border-b border-slate-100 p-2 dark:border-slate-800">
             <Search className="absolute left-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
