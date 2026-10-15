@@ -54,6 +54,28 @@ export function leagueOptionLabel(code: string): string {
   return labels[code] ?? code;
 }
 
+/**
+ * Etykieta sędziego do listy rozwijanej z nazwiskiem na początku:
+ * "Tomasz Wajda (Żywiec)" -> "Wajda Tomasz (Żywiec)"
+ * Dzięki temu wpisanie litery na klawiaturze przenosi do pierwszego sędziego z nazwiskiem na tę literę.
+ */
+export function refereeOptionLabel(ref: string): string {
+  if (!ref) return "";
+  const match = /^(.*?)\s*\((.*?)\)$/.exec(ref.trim());
+  const fullName = match ? match[1].trim() : ref.trim();
+  const city = match ? match[2].trim() : null;
+
+  const parts = fullName.split(/\s+/);
+  if (parts.length >= 2) {
+    const surname = parts[parts.length - 1];
+    const firstNames = parts.slice(0, -1).join(" ");
+    const formatted = `${surname} ${firstNames}`;
+    return city ? `${formatted} (${city})` : formatted;
+  }
+
+  return ref;
+}
+
 export const LEAGUE_ORDER = ["I", "II", "III", "IV", "V", "VI", "PP", "PL", "PE", "SP", "B"];
 
 /** Krótka etykieta kolejki do tabeli. */

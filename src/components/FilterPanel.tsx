@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Filter, RotateCcw, Undo2, X } from "lucide-react";
 import type { Filters } from "@/lib/types";
-import { OWN_GOAL_QUERY, leagueOptionLabel } from "@/lib/parsing";
+import { OWN_GOAL_QUERY, leagueOptionLabel, refereeOptionLabel } from "@/lib/parsing";
 import { cn } from "@/lib/format";
 
 export interface FilterOptions {
@@ -185,7 +185,13 @@ export default function FilterPanel({ filters, options, activeCount, setFilter, 
             />
             <TextFilter label="Dokładny wynik" placeholder="np. 1:1, 2:0" value={filters.result} onCommit={(v, r) => setFilter("result", v, r)} />
             <Select label="Miejsce" placeholder="Wszystkie" value={filters.place} onChange={(v) => setFilter("place", v)} options={opt(options.places)} />
-            <Select label="Sędzia" placeholder="Wszyscy sędziowie" value={filters.referee} onChange={(v) => setFilter("referee", v)} options={opt(options.referees)} />
+            <Select
+              label="Sędzia"
+              placeholder="Wszyscy sędziowie"
+              value={filters.referee}
+              onChange={(v) => setFilter("referee", v)}
+              options={opt(options.referees, refereeOptionLabel)}
+            />
             <TextFilter label="Zawodnik (skład)" placeholder="np. Marcjanik" value={filters.player} onCommit={(v, r) => setFilter("player", v, r)} />
             <TextFilter
               label="Strzelec"

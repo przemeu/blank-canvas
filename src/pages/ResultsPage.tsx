@@ -6,7 +6,7 @@ import { useFilterParams } from "@/hooks/useFilterParams";
 import { applyFilters, countActiveFilters, sortMatches } from "@/lib/filters";
 import { computeStats } from "@/lib/stats";
 import { exportMatchesToXlsx } from "@/lib/export";
-import { LEAGUE_ORDER, seasonStartYear } from "@/lib/parsing";
+import { LEAGUE_ORDER, refereeOptionLabel, seasonStartYear } from "@/lib/parsing";
 import { plural } from "@/lib/format";
 import FilterPanel, { type FilterOptions } from "@/components/FilterPanel";
 import StatsDashboard from "@/components/StatsDashboard";
@@ -14,11 +14,6 @@ import MatchTable from "@/components/MatchTable";
 import SelectionBar from "@/components/SelectionBar";
 
 const collator = new Intl.Collator("pl", { sensitivity: "base" });
-
-function refereeSortKey(name: string): string {
-  const parts = name.split("(")[0].trim().split(/\s+/);
-  return parts[parts.length - 1] ?? "";
-}
 
 export default function ResultsPage() {
   const navigate = useNavigate();
@@ -39,7 +34,7 @@ export default function ResultsPage() {
         return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
       }),
       places: uniq((m) => m.miejsce).sort((a, b) => ["Dom", "Wyjazd", "Neutralne"].indexOf(a) - ["Dom", "Wyjazd", "Neutralne"].indexOf(b)),
-      referees: uniq((m) => m.sedzia).sort((a, b) => collator.compare(refereeSortKey(a), refereeSortKey(b)) || collator.compare(a, b)),
+      referees: uniq((m) => m.sedzia).sort((a, b) => collator.compare(refereeOptionLabel(a), refereeOptionLabel(b))),
     };
   }, [matches]);
 
