@@ -80,11 +80,25 @@ export function applyFilters(matches: Match[], f: Filters): Match[] {
     if (exact && m.wynik !== exact) return false;
 
     if (scorerQ) {
-      const a = (m.strzelcy ?? "").toLowerCase();
-      const b = (m.golPrzeciwnika ?? "").toLowerCase();
-      if (!a.includes(scorerQ) && !b.includes(scorerQ)) return false;
+      const matchScorer = (text: string | null) => {
+        if (!text) return false;
+        const lower = text.toLowerCase();
+        if (!lower.includes(scorerQ)) return false;
+        if (!scorerQ.includes("(") && lower.includes(`${scorerQ} (`)) {
+          const stripped = lower.split(`${scorerQ} (`).join("### (");
+          return stripped.includes(scorerQ);
+        }
+        return true;
+      };
+      if (!matchScorer(m.strzelcy) && !matchScorer(m.golPrzeciwnika)) return false;
     }
-    if (playerRe && !playerRe.test(m.squadSearch)) return false;
+    if (playerRe) {
+      if (!playerRe.test(m.squadSearch)) return false;
+      if (!playerQ.includes("(") && m.squadSearch.includes(`${playerQ} (`)) {
+        const stripped = m.squadSearch.split(`${playerQ} (`).join("### (");
+        if (!playerRe.test(stripped)) return false;
+      }
+    }
     if (minuteRe && !minuteRe.test(m.strzelcy ?? "")) return false;
     if (kolejki && !kolejki.has(m.kolejka.toUpperCase())) return false;
     if (day && !m.data.startsWith(`${day}.`)) return false;

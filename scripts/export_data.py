@@ -295,6 +295,15 @@ def export_matches() -> None:
         if full_date and rok is not None and str(rok) == full_date[:4]:
             rok = None
 
+        opp = clean_opponent(r["Przeciwnik"])
+        sklad_przeciwnika = clean_text(r["sklad_przeciwnika"])
+        gol_przeciwnika = clean_text(r["gol_przeciwnika"])
+        if opp and "Bałtyk" in opp and full_date and "1992" <= str(full_date)[:4] <= "1995":
+            if sklad_przeciwnika and "Krzysztof Sobieraj (Bałtyk Gdynia)" not in sklad_przeciwnika:
+                sklad_przeciwnika = sklad_przeciwnika.replace("Krzysztof Sobieraj", "Krzysztof Sobieraj (Bałtyk Gdynia)")
+            if gol_przeciwnika and "Krzysztof Sobieraj (Bałtyk Gdynia)" not in gol_przeciwnika:
+                gol_przeciwnika = gol_przeciwnika.replace("Krzysztof Sobieraj", "Krzysztof Sobieraj (Bałtyk Gdynia)")
+
         out_rows.append([
             r["ID"],
             d("sezon", clean_text(r["Sezon"])),
@@ -303,14 +312,14 @@ def export_matches() -> None:
             rok,
             d("liga", clean_text(r["Liga"])),
             d("miejsce", clean_place(r["Miejsce"])),
-            d("przeciwnik", clean_opponent(r["Przeciwnik"])),
+            d("przeciwnik", opp),
             score,
             clean_text(r["Strzelcy"]),
             clean_attendance(r["Frekwencja"]),
             int(full_date.replace("-", "")) if full_date and re.fullmatch(r"\d{4}-\d{2}-\d{2}", full_date) else full_date,
-            clean_text(r["gol_przeciwnika"]),
+            gol_przeciwnika,
             encode_squad(clean_text(r["sklad_arka"]), players),
-            encode_squad(clean_text(r["sklad_przeciwnika"]), players),
+            encode_squad(sklad_przeciwnika, players),
             d("sedzia", clean_referee(r["sedzia"])),
             encode_cards(r["kartki_arka"], players),
             encode_cards(r["kartki_przeciwnik"], players),

@@ -216,14 +216,20 @@ export function extractScorerNames(scorers: string | null): string[] {
  */
 export function scorerSortKey(name: string): string {
   if (!name || name === OWN_GOAL_QUERY) return "";
-  const parts = name.trim().split(/\s+/);
+  const mParen = /^(.*?)\s*\((.*?)\)$/.exec(name.trim());
+  const fullName = mParen ? mParen[1].trim() : name.trim();
+  const paren = mParen ? mParen[2].trim() : null;
+
+  const parts = fullName.split(/\s+/);
   if (parts.length >= 2) {
     if (parts.length === 3 && (parts[1].toLowerCase() === "da" || parts[1].toLowerCase() === "de")) {
-      return `${parts[1]} ${parts[2]} ${parts[0]}`;
+      const key = `${parts[1]} ${parts[2]} ${parts[0]}`;
+      return paren ? `${key} (${paren})` : key;
     }
     const surname = parts[parts.length - 1];
     const firstNames = parts.slice(0, -1).join(" ");
-    return `${surname} ${firstNames}`;
+    const key = `${surname} ${firstNames}`;
+    return paren ? `${key} (${paren})` : key;
   }
   return name;
 }
