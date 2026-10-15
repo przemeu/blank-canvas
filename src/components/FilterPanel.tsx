@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Filter, RotateCcw, Undo2, X } from "lucide-react";
 import type { Filters } from "@/lib/types";
-import { leagueOptionLabel, refereeOptionLabel, scorerOptionLabel } from "@/lib/parsing";
+import { leagueOptionLabel, scorerOptionLabel } from "@/lib/parsing";
 import { cn } from "@/lib/format";
 
 export interface FilterOptions {
@@ -196,7 +196,7 @@ export default function FilterPanel({ filters, options, activeCount, setFilter, 
               placeholder="Wszyscy sędziowie"
               value={filters.referee}
               onChange={(v) => setFilter("referee", v)}
-              options={opt(options.referees, refereeOptionLabel)}
+              options={opt(options.referees)}
             />
             <TextFilter label="Zawodnik (skład)" placeholder="np. Marcjanik" value={filters.player} onCommit={(v, r) => setFilter("player", v, r)} />
             <Select

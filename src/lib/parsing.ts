@@ -57,9 +57,8 @@ export function leagueOptionLabel(code: string): string {
 /**
  * Etykieta sędziego do listy rozwijanej z nazwiskiem na początku:
  * "Tomasz Wajda (Żywiec)" -> "Wajda Tomasz (Żywiec)"
- * Dzięki temu wpisanie litery na klawiaturze przenosi do pierwszego sędziego z nazwiskiem na tę literę.
- */
-export function refereeOptionLabel(ref: string): string {
+/** Klucz do sortowania sędziów alfabetycznie po nazwisku. */
+export function refereeSortKey(ref: string): string {
   if (!ref) return "";
   const match = /^(.*?)\s*\((.*?)\)$/.exec(ref.trim());
   const fullName = match ? match[1].trim() : ref.trim();
@@ -73,6 +72,10 @@ export function refereeOptionLabel(ref: string): string {
     return city ? `${formatted} (${city})` : formatted;
   }
 
+  return ref;
+}
+
+export function refereeOptionLabel(ref: string): string {
   return ref;
 }
 
@@ -200,15 +203,10 @@ export function extractScorerNames(scorers: string | null): string[] {
 }
 
 /**
- * Etykieta strzelca do listy rozwijanej z nazwiskiem na początku:
- * "Karol Czubak" -> "Czubak Karol"
- * Dzięki temu wpisanie litery na klawiaturze przenosi do pierwszego strzelca z nazwiskiem na tę literę (analogicznie do sędziów).
+ * Klucz do sortowania strzelców alfabetycznie po nazwisku.
  */
-export function scorerOptionLabel(name: string): string {
-  if (!name) return "";
-  if (name === OWN_GOAL_QUERY || name.toLowerCase() === "bramki samobójcze") {
-    return "Bramki samobójcze";
-  }
+export function scorerSortKey(name: string): string {
+  if (!name || name === OWN_GOAL_QUERY) return "";
   const parts = name.trim().split(/\s+/);
   if (parts.length >= 2) {
     if (parts.length === 3 && (parts[1].toLowerCase() === "da" || parts[1].toLowerCase() === "de")) {
@@ -217,6 +215,17 @@ export function scorerOptionLabel(name: string): string {
     const surname = parts[parts.length - 1];
     const firstNames = parts.slice(0, -1).join(" ");
     return `${surname} ${firstNames}`;
+  }
+  return name;
+}
+
+/**
+ * Etykieta strzelca do listy rozwijanej (imię jako pierwsze, np. "Nabil Aankour").
+ */
+export function scorerOptionLabel(name: string): string {
+  if (!name) return "";
+  if (name === OWN_GOAL_QUERY || name.toLowerCase() === "bramki samobójcze") {
+    return "Bramki samobójcze";
   }
   return name;
 }

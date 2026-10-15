@@ -6,7 +6,7 @@ import { useFilterParams } from "@/hooks/useFilterParams";
 import { applyFilters, countActiveFilters, sortMatches } from "@/lib/filters";
 import { computeStats } from "@/lib/stats";
 import { exportMatchesToXlsx } from "@/lib/export";
-import { LEAGUE_ORDER, OWN_GOAL_QUERY, compareOpponents, extractUniqueScorers, refereeOptionLabel, scorerOptionLabel, seasonStartYear } from "@/lib/parsing";
+import { LEAGUE_ORDER, OWN_GOAL_QUERY, compareOpponents, extractUniqueScorers, refereeSortKey, scorerSortKey, seasonStartYear } from "@/lib/parsing";
 import { plural } from "@/lib/format";
 import FilterPanel, { type FilterOptions } from "@/components/FilterPanel";
 import StatsDashboard from "@/components/StatsDashboard";
@@ -34,10 +34,10 @@ export default function ResultsPage() {
         return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
       }),
       places: uniq((m) => m.miejsce).sort((a, b) => ["Dom", "Wyjazd", "Neutralne"].indexOf(a) - ["Dom", "Wyjazd", "Neutralne"].indexOf(b)),
-      referees: uniq((m) => m.sedzia).sort((a, b) => collator.compare(refereeOptionLabel(a), refereeOptionLabel(b))),
+      referees: uniq((m) => m.sedzia).sort((a, b) => collator.compare(refereeSortKey(a), refereeSortKey(b))),
       scorers: [
         OWN_GOAL_QUERY,
-        ...extractUniqueScorers(matches).sort((a, b) => collator.compare(scorerOptionLabel(a), scorerOptionLabel(b))),
+        ...extractUniqueScorers(matches).sort((a, b) => collator.compare(scorerSortKey(a), scorerSortKey(b))),
       ],
     };
   }, [matches]);
