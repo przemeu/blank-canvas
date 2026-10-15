@@ -8,7 +8,11 @@ export const ALL_LEAGUES_CODE = "LIGA";
 /** Zwraca true jeśli kod ligi oznacza rozgrywki ligowe (poziomy rzymskie: I, II, III, IV itd.). */
 export function isLeagueCode(code: string | null | undefined): boolean {
   if (!code) return false;
-  return /^[IVXLCDM]+$/i.test(code.trim());
+  const trimmed = code.trim().toUpperCase();
+  if (["PP", "PL", "PE", "LE", "SP", "B", "B1", "B2"].includes(trimmed)) {
+    return false;
+  }
+  return /^[IVXLCDM]+$/i.test(trimmed);
 }
 
 export function parseScore(score: string | null | undefined): [number, number] | null {
@@ -38,8 +42,8 @@ export function friendlyLeagueName(league: string | null | undefined, season: st
     : { I: "I liga", II: "II liga", III: "III liga", IV: "IV liga", V: "V liga", VI: "VI liga" };
   const cups: Record<string, string> = {
     PP: "Puchar Polski",
-    PL: "Puchar Ligi",
-    PE: "Puchar Ekstraklasy",
+    PL: "Puchar Ekstraklasy",
+    PE: "Liga Europy",
     SP: "Superpuchar",
     B: "Baraże",
   };
@@ -55,8 +59,8 @@ export function leagueOptionLabel(code: string): string {
     III: "3. poziom – II liga / III liga",
     IV: "4. poziom – III liga / IV liga",
     PP: "Puchar Polski",
-    PL: "Puchar Ligi",
-    PE: "Puchar Ekstraklasy",
+    PL: "Puchar Ekstraklasy",
+    PE: "Liga Europy",
     SP: "Superpuchar",
     B: "Baraże",
   };
@@ -115,7 +119,7 @@ export const LEAGUE_ORDER = [ALL_LEAGUES_CODE, "I", "II", "III", "IV", "V", "VI"
 
 /** Krótka etykieta kolejki do tabeli. */
 export function roundLabel(kolejka: string): string {
-  const map: Record<string, string> = { PP: "PP", PL: "PL", PE: "PE", SP: "SP", B: "Baraż", B1: "Baraż 1", B2: "Baraż 2" };
+  const map: Record<string, string> = { PP: "PP", PL: "PE", PE: "LE", SP: "SP", B: "Baraż", B1: "Baraż 1", B2: "Baraż 2" };
   return map[kolejka] ?? kolejka;
 }
 
@@ -149,6 +153,8 @@ export function parseKolejkaFilter(raw: string): string[] {
       const up = part.toUpperCase();
       out.push(up);
       if (up === "B") out.push("B1", "B2");
+      if (up === "LE") out.push("PE");
+      if (up === "PE") out.push("PL", "PE");
     }
   }
   return Array.from(new Set(out));

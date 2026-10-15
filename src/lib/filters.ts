@@ -67,6 +67,10 @@ export function applyFilters(matches: Match[], f: Filters): Match[] {
     if (f.league) {
       if (f.league === ALL_LEAGUES_CODE || f.league.toUpperCase() === "LIGA" || f.league === "Mecze ligowe" || f.league === "mecze-ligowe") {
         if (!isLeagueCode(m.liga)) return false;
+      } else if (f.league === "PE" || f.league === "LE" || f.league === "Liga Europy" || f.league === "liga-europy") {
+        if (m.liga !== "PE") return false;
+      } else if (f.league === "PL" || f.league === "Puchar Ekstraklasy" || f.league === "puchar-ekstraklasy") {
+        if (m.liga !== "PL") return false;
       } else if (m.liga !== f.league) {
         return false;
       }
@@ -131,8 +135,17 @@ export function filtersFromParams(params: URLSearchParams): Filters {
     if (v === null || v === "None") continue;
     if (key === "sort_order") {
       f.sort_order = v === "desc" ? "desc" : "asc";
-    } else if (key === "league" && (v.toUpperCase() === "LIGA" || v === "Mecze ligowe" || v === "mecze-ligowe")) {
-      f.league = ALL_LEAGUES_CODE;
+    } else if (key === "league") {
+      const low = v.toLowerCase().trim();
+      if (low === "liga" || low === "mecze ligowe" || low === "mecze-ligowe") {
+        f.league = ALL_LEAGUES_CODE;
+      } else if (low === "liga europy" || low === "liga-europy" || low === "le" || low === "pe") {
+        f.league = "PE";
+      } else if (low === "puchar ekstraklasy" || low === "puchar-ekstraklasy" || low === "pl") {
+        f.league = "PL";
+      } else {
+        f.league = v;
+      }
     } else {
       f[key] = v;
     }
