@@ -154,6 +154,8 @@ OPPONENT_MAPPINGS = {
     "Bogdanka Łęczna": "Górnik Łęczna",
     "Stasiak Opoczno": "Ceramika Opoczno",
     "Aluminium Konin": "Górnik Konin",
+    "Lechia/Polonia II Gdańsk": "Lechia II Gdańsk",
+    "Lechia/Olimpia Gdańsk": "Lechia Gdańsk",
 }
 
 
