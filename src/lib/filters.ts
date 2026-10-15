@@ -1,5 +1,5 @@
 import type { Filters, Match } from "./types";
-import { normalizeScorerQuery, parseKolejkaFilter } from "./parsing";
+import { ALL_LEAGUES_CODE, isLeagueCode, normalizeScorerQuery, parseKolejkaFilter } from "./parsing";
 
 export const EMPTY_FILTERS: Filters = {
   season: "",
@@ -60,7 +60,13 @@ export function applyFilters(matches: Match[], f: Filters): Match[] {
   return matches.filter((m) => {
     if (f.season && m.sezon !== f.season) return false;
     if (f.opponent && m.przeciwnik !== f.opponent) return false;
-    if (f.league && m.liga !== f.league) return false;
+    if (f.league) {
+      if (f.league === ALL_LEAGUES_CODE || f.league.toUpperCase() === "LIGA" || f.league === "Mecze ligowe" || f.league === "mecze-ligowe") {
+        if (!isLeagueCode(m.liga)) return false;
+      } else if (m.liga !== f.league) {
+        return false;
+      }
+    }
     if (f.place && m.miejsce !== f.place) return false;
     if (f.referee && m.sedzia !== f.referee && !m.sedzia?.startsWith(f.referee + " (")) return false;
     if (f.rok && String(m.rok) !== f.rok.trim()) return false;
@@ -101,8 +107,13 @@ export function filtersFromParams(params: URLSearchParams): Filters {
   for (const key of Object.keys(EMPTY_FILTERS) as (keyof Filters)[]) {
     const v = params.get(key);
     if (v === null || v === "None") continue;
-    if (key === "sort_order") f.sort_order = v === "desc" ? "desc" : "asc";
-    else f[key] = v;
+    if (key === "sort_order") {
+      f.sort_order = v === "desc" ? "desc" : "asc";
+    } else if (key === "league" && (v.toUpperCase() === "LIGA" || v === "Mecze ligowe" || v === "mecze-ligowe")) {
+      f.league = ALL_LEAGUES_CODE;
+    } else {
+      f[key] = v;
+    }
   }
   return f;
 }

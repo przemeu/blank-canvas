@@ -6,7 +6,7 @@ import { useFilterParams } from "@/hooks/useFilterParams";
 import { applyFilters, countActiveFilters, sortMatches } from "@/lib/filters";
 import { computeStats } from "@/lib/stats";
 import { exportMatchesToXlsx } from "@/lib/export";
-import { LEAGUE_ORDER, OWN_GOAL_QUERY, compareOpponents, extractUniqueScorers, refereeSortKey, scorerSortKey, seasonStartYear } from "@/lib/parsing";
+import { ALL_LEAGUES_CODE, LEAGUE_ORDER, OWN_GOAL_QUERY, compareOpponents, extractUniqueScorers, refereeSortKey, scorerSortKey, seasonStartYear } from "@/lib/parsing";
 import { plural } from "@/lib/format";
 import FilterPanel, { type FilterOptions } from "@/components/FilterPanel";
 import StatsDashboard from "@/components/StatsDashboard";
@@ -28,11 +28,14 @@ export default function ResultsPage() {
     return {
       seasons: uniq((m) => m.sezon).sort((a, b) => (seasonStartYear(b) ?? 0) - (seasonStartYear(a) ?? 0) || collator.compare(b, a)),
       opponents: uniq((m) => m.przeciwnik).sort((a, b) => compareOpponents(a, b, collator)),
-      leagues: leagues.sort((a, b) => {
-        const ia = LEAGUE_ORDER.indexOf(a);
-        const ib = LEAGUE_ORDER.indexOf(b);
-        return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-      }),
+      leagues: [
+        ALL_LEAGUES_CODE,
+        ...leagues.filter((l) => l !== ALL_LEAGUES_CODE).sort((a, b) => {
+          const ia = LEAGUE_ORDER.indexOf(a);
+          const ib = LEAGUE_ORDER.indexOf(b);
+          return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+        }),
+      ],
       places: uniq((m) => m.miejsce).sort((a, b) => ["Dom", "Wyjazd", "Neutralne"].indexOf(a) - ["Dom", "Wyjazd", "Neutralne"].indexOf(b)),
       referees: uniq((m) => m.sedzia).sort((a, b) => collator.compare(refereeSortKey(a), refereeSortKey(b))),
       scorers: [

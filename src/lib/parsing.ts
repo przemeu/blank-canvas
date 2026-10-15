@@ -3,6 +3,13 @@
  */
 
 export const CUP_CODES = ["PP", "PL", "PE", "SP", "B", "B1", "B2"];
+export const ALL_LEAGUES_CODE = "LIGA";
+
+/** Zwraca true jeśli kod ligi oznacza rozgrywki ligowe (poziomy rzymskie: I, II, III, IV itd.). */
+export function isLeagueCode(code: string | null | undefined): boolean {
+  if (!code) return false;
+  return /^[IVXLCDM]+$/i.test(code.trim());
+}
 
 export function parseScore(score: string | null | undefined): [number, number] | null {
   if (!score) return null;
@@ -24,6 +31,7 @@ export function isPost2008(season: string | null | undefined): boolean {
 /** Czytelna nazwa rozgrywek dla danego sezonu (reforma lig w 2008 r.). */
 export function friendlyLeagueName(league: string | null | undefined, season: string | null | undefined): string {
   if (!league) return "";
+  if (league === ALL_LEAGUES_CODE) return "Mecze ligowe";
   const post = isPost2008(season);
   const leagues: Record<string, string> = post
     ? { I: "Ekstraklasa", II: "I liga", III: "II liga", IV: "III liga", V: "IV liga", VI: "V liga" }
@@ -40,6 +48,7 @@ export function friendlyLeagueName(league: string | null | undefined, season: st
 
 /** Etykieta kodu ligi do listy rozwijanej (niezależna od sezonu). */
 export function leagueOptionLabel(code: string): string {
+  if (code === ALL_LEAGUES_CODE) return "Mecze ligowe";
   const labels: Record<string, string> = {
     I: "1. poziom – Ekstraklasa / I liga",
     II: "2. poziom – I liga / II liga",
@@ -102,7 +111,7 @@ export function compareOpponents(a: string, b: string, collator: Intl.Collator):
   return collator.compare(a, b);
 }
 
-export const LEAGUE_ORDER = ["I", "II", "III", "IV", "V", "VI", "PP", "PL", "PE", "SP", "B"];
+export const LEAGUE_ORDER = [ALL_LEAGUES_CODE, "I", "II", "III", "IV", "V", "VI", "PP", "PL", "PE", "SP", "B"];
 
 /** Krótka etykieta kolejki do tabeli. */
 export function roundLabel(kolejka: string): string {
