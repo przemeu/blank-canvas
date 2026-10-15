@@ -55,7 +55,11 @@ export function applyFilters(matches: Match[], f: Filters): Match[] {
   const day = f.date.trim() ? normalizeDayOfYear(f.date) : "";
   const from = f.from_date.trim() ? normalizeBoundary(f.from_date, false) : null;
   const to = f.to_date.trim() ? normalizeBoundary(f.to_date, true) : null;
-  const playerRe = playerQ ? new RegExp(escapeRegex(playerQ)) : null;
+  const playerRe = playerQ
+    ? /\s+(i|ii|iii|iv|v)$/i.test(playerQ)
+      ? new RegExp(escapeRegex(playerQ) + "(?![a-zA-Z0-9])")
+      : new RegExp(escapeRegex(playerQ))
+    : null;
 
   return matches.filter((m) => {
     if (f.season && m.sezon !== f.season) return false;
@@ -84,6 +88,10 @@ export function applyFilters(matches: Match[], f: Filters): Match[] {
         if (!text) return false;
         const lower = text.toLowerCase();
         if (!lower.includes(scorerQ)) return false;
+        if (/\s+(i|ii|iii|iv|v)$/i.test(scorerQ)) {
+          const re = new RegExp(escapeRegex(scorerQ) + "(?![a-zA-Z0-9])", "i");
+          if (!re.test(lower)) return false;
+        }
         if (!scorerQ.includes("(") && lower.includes(`${scorerQ} (`)) {
           const stripped = lower.split(`${scorerQ} (`).join("### (");
           return stripped.includes(scorerQ);

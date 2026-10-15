@@ -217,21 +217,32 @@ export function extractScorerNames(scorers: string | null): string[] {
 export function scorerSortKey(name: string): string {
   if (!name || name === OWN_GOAL_QUERY) return "";
   const mParen = /^(.*?)\s*\((.*?)\)$/.exec(name.trim());
-  const fullName = mParen ? mParen[1].trim() : name.trim();
+  let fullName = mParen ? mParen[1].trim() : name.trim();
   const paren = mParen ? mParen[2].trim() : null;
+
+  let romanSuffix: string | null = null;
+  const mRoman = /^(.*?)\s+(I|II|III|IV|V)$/.exec(fullName);
+  if (mRoman) {
+    fullName = mRoman[1].trim();
+    romanSuffix = mRoman[2];
+  }
 
   const parts = fullName.split(/\s+/);
   if (parts.length >= 2) {
     if (parts.length === 3 && (parts[1].toLowerCase() === "da" || parts[1].toLowerCase() === "de")) {
-      const key = `${parts[1]} ${parts[2]} ${parts[0]}`;
+      let key = `${parts[1]} ${parts[2]} ${parts[0]}`;
+      if (romanSuffix) key = `${key} ${romanSuffix}`;
       return paren ? `${key} (${paren})` : key;
     }
     const surname = parts[parts.length - 1];
     const firstNames = parts.slice(0, -1).join(" ");
-    const key = `${surname} ${firstNames}`;
+    let key = `${surname} ${firstNames}`;
+    if (romanSuffix) key = `${key} ${romanSuffix}`;
     return paren ? `${key} (${paren})` : key;
   }
-  return name;
+  let key = fullName;
+  if (romanSuffix) key = `${key} ${romanSuffix}`;
+  return paren ? `${key} (${paren})` : key;
 }
 
 /**

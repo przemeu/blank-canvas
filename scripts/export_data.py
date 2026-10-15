@@ -43,6 +43,24 @@ OUT_JSON = ROOT / "public" / "data" / "matches.json"
 OUT_LOGOS = ROOT / "public" / "logos"
 LOGO_SOURCES = [ROOT / "static" / "logos", ROOT / "legacy" / "static" / "logos"]
 
+try:
+    from scripts.apply_player_disambiguation import (
+        RULES,
+        replace_player_in_cards,
+        replace_player_in_goals,
+        replace_player_in_squad,
+    )
+except ImportError:
+    try:
+        from apply_player_disambiguation import (
+            RULES,
+            replace_player_in_cards,
+            replace_player_in_goals,
+            replace_player_in_squad,
+        )
+    except ImportError:
+        RULES = []
+
 COLUMNS = [
     "id", "sezon", "kolejka", "data", "rok", "liga", "miejsce", "przeciwnik",
     "wynik", "strzelcy", "frekwencja", "fullDate", "golPrzeciwnika",
@@ -186,8 +204,8 @@ class Interner:
 # --------------------------------------------------------------------------- #
 # Składy – port funkcji process_squad z oryginalnej aplikacji Flask
 # --------------------------------------------------------------------------- #
-RE_OFF_OLD = re.compile(r"^(.*?)\s+(\d+)$")
-RE_ON_OLD = re.compile(r"^(\d+)\s+(.*)$")
+RE_OFF_OLD = re.compile(r"^(.*?)\s+(\d+)'?$")
+RE_ON_OLD = re.compile(r"^(\d+)'?\s+(.*)$")
 RE_OFF_NEW = re.compile(r"^(.*?)\s+\((\d+)'?\)$")
 
 
@@ -298,11 +316,22 @@ def export_matches() -> None:
         opp = clean_opponent(r["Przeciwnik"])
         sklad_przeciwnika = clean_text(r["sklad_przeciwnika"])
         gol_przeciwnika = clean_text(r["gol_przeciwnika"])
-        if opp and "Bałtyk" in opp and full_date and "1992" <= str(full_date)[:4] <= "1995":
-            if sklad_przeciwnika and "Krzysztof Sobieraj (Bałtyk Gdynia)" not in sklad_przeciwnika:
-                sklad_przeciwnika = sklad_przeciwnika.replace("Krzysztof Sobieraj", "Krzysztof Sobieraj (Bałtyk Gdynia)")
-            if gol_przeciwnika and "Krzysztof Sobieraj (Bałtyk Gdynia)" not in gol_przeciwnika:
-                gol_przeciwnika = gol_przeciwnika.replace("Krzysztof Sobieraj", "Krzysztof Sobieraj (Bałtyk Gdynia)")
+        kartki_przeciwnik = r["kartki_przeciwnik"]
+
+        if RULES:
+            d_str = str(full_date) if full_date else ""
+            opp_str = str(opp) if opp else ""
+            for old_name, new_name, check_func in RULES:
+                try:
+                    if check_func(r["ID"], d_str, opp_str):
+                        if sklad_przeciwnika and old_name in sklad_przeciwnika:
+                            sklad_przeciwnika = replace_player_in_squad(sklad_przeciwnika, old_name, new_name)
+                        if gol_przeciwnika and old_name in gol_przeciwnika:
+                            gol_przeciwnika = replace_player_in_goals(gol_przeciwnika, old_name, new_name)
+                        if kartki_przeciwnik and old_name in kartki_przeciwnik:
+                            kartki_przeciwnik = replace_player_in_cards(kartki_przeciwnik, old_name, new_name)
+                except Exception:
+                    pass
 
         out_rows.append([
             r["ID"],
@@ -322,7 +351,7 @@ def export_matches() -> None:
             encode_squad(sklad_przeciwnika, players),
             d("sedzia", clean_referee(r["sedzia"])),
             encode_cards(r["kartki_arka"], players),
-            encode_cards(r["kartki_przeciwnik"], players),
+            encode_cards(kartki_przeciwnik, players),
             clean_text(r["nazwa_historyczna"]) if "nazwa_historyczna" in r.keys() else None,
         ])
         while out_rows[-1] and out_rows[-1][-1] is None:
