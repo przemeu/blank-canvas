@@ -94,37 +94,8 @@ export default function ComboboxSelect({ label, placeholder, value, onChange, op
     });
   }, [options, query]);
 
-  // Wszystkie unikalne litery początkowe nazwisk dostępne na liście
-  const availableLetters = useMemo(() => {
-    const letters = new Set<string>();
-    for (const opt of options) {
-      const l = getInitialLetter(opt.sortKey);
-      if (l !== "#") letters.add(l);
-    }
-    return Array.from(letters).sort((a, b) => a.localeCompare(b, "pl"));
-  }, [options]);
-
   const selectedOption = useMemo(() => options.find((o) => o.value === value), [options, value]);
   const displayLabel = selectedOption ? selectedOption.label : value || placeholder;
-
-  // Przewiń listę do pierwszej opcji na daną literę nazwiska
-  const scrollKeyToLetter = (letter: string) => {
-    const lNorm = normalize(letter);
-    const targetIndex = filteredOptions.findIndex((o) => {
-      const keyNorm = normalize(o.sortKey || "");
-      return keyNorm.startsWith(lNorm);
-    });
-
-    if (targetIndex !== -1 && listRef.current) {
-      const offset = !query ? 1 : 0;
-      setHighlightedIndex(targetIndex + offset);
-      const items = listRef.current.querySelectorAll("li");
-      const targetEl = items[targetIndex + offset];
-      if (targetEl) {
-        targetEl.scrollIntoView({ block: "start", behavior: "smooth" });
-      }
-    }
-  };
 
   // Zamknięcie po kliknięciu poza komponentem
   useEffect(() => {
@@ -285,24 +256,6 @@ export default function ComboboxSelect({ label, placeholder, value, onChange, op
               className="h-8 w-full rounded-md bg-slate-50 pl-8 pr-3 text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-arka-navy dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-arka-gold"
             />
           </div>
-
-          {/* Klikalny pasek liter alfabetu (szybki skok do nazwiska) */}
-          {!query && availableLetters.length > 0 && (
-            <div className="flex flex-wrap items-center gap-0.5 border-b border-slate-100 bg-slate-50/70 px-2 py-1 dark:border-slate-800 dark:bg-slate-800/40">
-              <span className="mr-1 text-[10px] font-semibold uppercase text-slate-400">Skok:</span>
-              {availableLetters.map((l) => (
-                <button
-                  key={l}
-                  type="button"
-                  onClick={() => scrollKeyToLetter(l)}
-                  className="rounded px-1 text-[11px] font-bold text-slate-600 hover:bg-arka-navy hover:text-white dark:text-slate-300 dark:hover:bg-arka-gold dark:hover:text-arka-navy"
-                  title={`Przewiń do nazwisk na literę ${l}`}
-                >
-                  {l}
-                </button>
-              ))}
-            </div>
-          )}
 
           {/* Lista pozycji */}
           <ul ref={listRef} className="max-h-56 overflow-y-auto py-1 text-xs" role="listbox">
