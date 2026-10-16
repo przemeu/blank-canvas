@@ -34,7 +34,7 @@
   "Lechia II Gdańsk": "lechia_ii_gdansk.png",
   "Grom Wejherowo": null,
   "Jedność Gościcino": null,
-  "Polonia II Gdańsk": null,
+  "Polonia II Gdańsk": "polonia_gdansk.png",
   "Zatoka Braniewo": "zatoka_braniewo.png",
   "Górnik Konin": "aluminium_konin.png",
   "Lublinianka Lublin": "lublinianka_lublin.png",
@@ -220,7 +220,7 @@
   "Ostrovia Ostrów Wlkp.": "ostrovia_ostrow_wlkp.png",
   "FC Piaseczno": null,
   "Krisbut Myszków": "ks_myszkow.png",
-  "KP Wałbrzych": null,
+  "KP Wałbrzych": "gornik_walbrzych.png",
   "Pogoń Tczew": null,
   "Wisła Płock": "wisla_plock.png",
   "Widzew Łódź": "widzew_lodz.png",
@@ -236,5 +236,9 @@
   "Kaliski KS Kalisz": "kks_kalisz.png",
   "Legia II Warszawa": "legia_warszawa.png",
   "Polonia II Warszawa": "polonia_warszawa.png",
-  "Wisła II Tczew": "wisla_tczew.png"
+  "Wisła II Tczew": "wisla_tczew.png",
+  "Pomerania Police": "chemik_police.png",
+  "Warmia II Olsztyn": "warmia_olsztyn.png",
+  "Warmia/Stomil II Olsztyn": "warmia_olsztyn.png",
+  "TKP Toruń": "elana_torun.png"
 }
