@@ -203,6 +203,18 @@ export function extractScorerNames(scorers: string | null): string[] {
       if (last) names.push(last);
       continue;
     }
+    if (part.includes(",")) {
+      const mComma = /^(.*?)\s+(\d.*)$/.exec(part);
+      if (mComma) {
+        const playerName = mComma[1].replace(/\s*\(k\)/gi, "").replace(/^\(+|\)+$/g, "").trim();
+        const mins = mComma[2].split(",").map((x) => x.trim()).filter(Boolean);
+        for (let i = 0; i < mins.length; i++) {
+          names.push(playerName);
+        }
+        last = playerName;
+        continue;
+      }
+    }
     const m = MINUTE_TAIL.exec(part);
     if (!m && isNotePart(part, 25)) {
       last = null;
@@ -275,6 +287,16 @@ export function extractUniqueScorers(matches: { strzelcy: string | null }[]): st
     for (const part of m.strzelcy.split(";")) {
       const trimmed = part.trim();
       if (!trimmed || (trimmed.startsWith("(") && trimmed.endsWith(")"))) continue;
+      if (trimmed.includes(",")) {
+        const mComma = /^(.*?)\s+(\d.*)$/.exec(trimmed);
+        if (mComma) {
+          let name = mComma[1].replace(/\s*\(k\)/gi, "").replace(/^\(+|\)+$/g, "").trim();
+          if (name && !/^\d+$/.test(name) && name.toLowerCase() !== "walkower") {
+            scorersSet.add(name);
+          }
+          continue;
+        }
+      }
       const mt = MINUTE_TAIL.exec(trimmed);
       let name = mt ? trimmed.slice(0, mt.index).trim() : trimmed;
       name = name.replace(/\s*\(k\)/gi, "").replace(/^\(+|\)+$/g, "").trim();
@@ -339,6 +361,23 @@ export function scorerTokens(scorers: string | null): ScorerToken[] {
       continue;
     }
 
+    if (part.includes(",")) {
+      const mComma = /^(.*?)\s+(\d.*)$/.exec(part);
+      if (mComma) {
+        const playerName = mComma[1].trim();
+        const mins = mComma[2].split(",").map((x) => x.trim()).filter(Boolean);
+        const nameClean = playerName.replace(/\s*\(k\)/gi, "").replace(/^\(+|\)+$/g, "");
+        sep();
+        tokens.push({ type: "player", text: playerName, scorer: nameClean });
+        for (const mn of mins) {
+          tokens.push({ type: "text", text: " " });
+          const digits = /\d+(?:\+\d+)?/.exec(mn);
+          tokens.push({ type: "minute", text: mn, minute: digits ? digits[0] : mn });
+        }
+        continue;
+      }
+    }
+
     const m = MINUTE_TAIL.exec(part);
     const namePart = m ? part.slice(0, m.index).trim() : part;
     const minutePart = m ? part.slice(m.index).trim() : null;
@@ -393,6 +432,34 @@ export function parseGoalEvents(goals: string | null, isHome: boolean): Timeline
       const min = /\d+(?:\+\d+)?/.exec(part)![0];
       events.push({ minute: min, type: /k/i.test(part) ? "penalty" : "goal", player: last, isHome });
       continue;
+    }
+
+    if (part.includes(",")) {
+      const mComma = /^(.*?)\s+(\d.*)$/.exec(part);
+      if (mComma) {
+        const playerName = mComma[1].trim();
+        const mins = mComma[2].split(",").map((x) => x.trim()).filter(Boolean);
+        for (const mn of mins) {
+          const mTail = /^\s*(\d+(?:\+\d+)?)\s*(?:\(?(k|s)\)?|')?$/i.exec(mn);
+          let minute = mn;
+          let penalty = false;
+          let ownGoal = false;
+          if (mTail) {
+            minute = mTail[1];
+            const suffix = (mTail[2] ?? "").toLowerCase();
+            penalty = suffix === "k";
+            ownGoal = suffix === "s";
+          }
+          events.push({
+            minute,
+            type: ownGoal ? "own_goal" : penalty ? "penalty" : "goal",
+            player: playerName,
+            isHome,
+          });
+        }
+        last = playerName;
+        continue;
+      }
     }
 
     const m = GOAL_TAIL.exec(part);
