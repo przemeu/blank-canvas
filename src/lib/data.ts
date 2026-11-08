@@ -106,14 +106,14 @@ export function decodePayload(payload: RawPayload): Match[] {
 }
 
 export async function loadMatches(): Promise<Match[]> {
-  const res = await fetch(`${import.meta.env.BASE_URL}data/matches.json`);
+  const res = await fetch(`${import.meta.env.BASE_URL}data/matches.json`, { cache: "no-cache" });
   if (!res.ok) throw new Error(`Nie udało się wczytać danych (${res.status})`);
   return decodePayload((await res.json()) as RawPayload);
 }
 
 export async function loadLogoMapping(): Promise<Record<string, string | null>> {
   try {
-    const res = await fetch(`${import.meta.env.BASE_URL}logos/mapping.json`);
+    const res = await fetch(`${import.meta.env.BASE_URL}logos/mapping.json`, { cache: "no-cache" });
     if (!res.ok) return {};
     return (await res.json()) as Record<string, string | null>;
   } catch {
