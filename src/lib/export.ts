@@ -24,6 +24,7 @@ export async function exportMatchesToXlsx(matches: Match[], filename: string): P
     "Gole przeciwnika": m.golPrzeciwnika ?? "",
     Frekwencja: m.frekwencja ?? "",
     Sędzia: m.sedzia ?? "",
+    Uwagi: m.uwagi ?? "",
     "Skład Arki": squadToText(m.skladArka),
     "Skład przeciwnika": squadToText(m.skladPrzeciwnika),
   }));

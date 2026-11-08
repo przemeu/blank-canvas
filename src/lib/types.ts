@@ -41,6 +41,8 @@ export interface Match {
   squadSearch: string;
   /** Nazwa historyczna/sponsorska rywala w tym konkretnym meczu */
   historicalName?: string | null;
+  /** Dodatkowe uwagi lub miejsce rozegrania (np. mecz w Gdyni, gdzie formalnym gospodarzem był rywal) */
+  uwagi?: string | null;
 }
 
 export type LogoMapping = Record<string, string | null>;

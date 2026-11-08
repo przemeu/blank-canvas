@@ -1,6 +1,6 @@
 import { useMemo, type ReactNode } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowDown, ArrowUp, Building2, CalendarDays, ChevronLeft, ChevronRight, ClipboardList, Flag, Info, Timer, Users } from "lucide-react";
+import { ArrowLeft, ArrowDown, ArrowUp, Building2, CalendarDays, ChevronLeft, ChevronRight, ClipboardList, Flag, Info, MapPin, Timer, Users } from "lucide-react";
 import { useData } from "@/context/AppContext";
 import { filterHref } from "@/hooks/useFilterParams";
 import type { Card, Match, SquadPlayer } from "@/lib/types";
@@ -264,6 +264,12 @@ export default function MatchPage() {
                 </span>
               )}
             </div>
+            {match.uwagi && (
+              <div className="mt-1 flex max-w-xs sm:max-w-md items-center justify-center gap-1.5 rounded-full bg-black/30 px-3 py-1 text-center text-xs font-medium text-amber-200 ring-1 ring-amber-400/30 backdrop-blur">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+                <span>{match.uwagi}</span>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -278,6 +284,16 @@ export default function MatchPage() {
                 </dt>
                 <dd className="font-semibold">{fmtDate(match.fullDate)}</dd>
               </div>
+              {match.uwagi && (
+                <div className="flex items-start justify-between gap-3 rounded-lg bg-amber-500/10 p-2.5 text-amber-900 dark:text-amber-200">
+                  <dt className="flex items-center gap-2 font-medium text-amber-800 dark:text-amber-300">
+                    <MapPin className="h-4 w-4 shrink-0" /> Miejsce / Uwagi
+                  </dt>
+                  <dd className="font-semibold text-right">
+                    {match.uwagi}
+                  </dd>
+                </div>
+              )}
               {match.historicalName && (
                 <div className="flex items-center justify-between gap-3 rounded-lg bg-amber-500/10 p-2.5 text-amber-900 dark:text-amber-200">
                   <dt className="flex items-center gap-2 font-medium text-amber-800 dark:text-amber-300">

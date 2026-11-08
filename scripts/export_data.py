@@ -65,7 +65,7 @@ COLUMNS = [
     "id", "sezon", "kolejka", "data", "rok", "liga", "miejsce", "przeciwnik",
     "wynik", "strzelcy", "frekwencja", "fullDate", "golPrzeciwnika",
     "skladArka", "skladPrzeciwnika", "sedzia", "kartkiArka", "kartkiPrzeciwnik",
-    "historicalName",
+    "historicalName", "uwagi",
 ]
 DICT_COLUMNS = ["sezon", "kolejka", "liga", "miejsce", "przeciwnik", "sedzia"]
 
@@ -353,6 +353,7 @@ def export_matches() -> None:
             encode_cards(r["kartki_arka"], players),
             encode_cards(kartki_przeciwnik, players),
             clean_text(r["nazwa_historyczna"]) if "nazwa_historyczna" in r.keys() else None,
+            clean_text(r["uwagi"]) if "uwagi" in r.keys() else None,
         ])
         while out_rows[-1] and out_rows[-1][-1] is None:
             out_rows[-1].pop()  # obcięcie końcowych wartości null

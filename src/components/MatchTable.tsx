@@ -96,6 +96,14 @@ const MatchRow = memo(function MatchRow({
       </td>
       <td className="whitespace-nowrap px-2 py-2">
         <Cell onClick={() => jumpTo("place", m.miejsce)}>{m.miejsce}</Cell>
+        {m.uwagi && (
+          <span
+            className="block text-[10px] font-medium text-amber-600 dark:text-amber-400"
+            title={m.uwagi}
+          >
+            {m.uwagi.includes("Gdyni") ? "(w Gdyni)" : "*"}
+          </span>
+        )}
       </td>
       <td className="px-2 py-2">
         <div className="flex min-w-[170px] items-center gap-2">
