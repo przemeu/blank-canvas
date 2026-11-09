@@ -250,8 +250,13 @@ export default function MatchPage() {
             <div className="rounded-2xl bg-black/25 px-4 py-2 font-mono text-4xl font-black tabular-nums tracking-tight text-arka-gold ring-1 ring-white/10 sm:px-6 sm:text-6xl">
               {view.score ? `${view.score[0]}:${view.score[1]}` : match.wynik ?? "–"}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
               <span className="rounded-full bg-white/15 px-3 py-0.5 text-xs font-semibold">{match.miejsce}</span>
+              {match.uwagi && (
+                <span className="rounded-full bg-amber-400/20 px-2.5 py-0.5 text-xs font-semibold text-amber-200 ring-1 ring-amber-400/40" title={match.uwagi}>
+                  w Gdyni
+                </span>
+              )}
               {outcome && (
                 <span
                   className={cn(
@@ -264,14 +269,15 @@ export default function MatchPage() {
                 </span>
               )}
             </div>
-            {match.uwagi && (
-              <div className="mt-1 flex max-w-xs sm:max-w-md items-center justify-center gap-1.5 rounded-full bg-black/30 px-3 py-1 text-center text-xs font-medium text-amber-200 ring-1 ring-amber-400/30 backdrop-blur">
-                <MapPin className="h-3.5 w-3.5 shrink-0 text-amber-400" />
-                <span>{match.uwagi}</span>
-              </div>
-            )}
           </div>
         </div>
+
+        {match.uwagi && (
+          <div className="relative mt-5 flex items-center justify-center gap-2 rounded-2xl bg-black/30 px-4 py-2.5 text-center text-xs sm:text-sm font-semibold text-amber-200 ring-1 ring-amber-400/40 backdrop-blur shadow-inner">
+            <MapPin className="h-4 w-4 shrink-0 text-amber-400" />
+            <span>{match.uwagi}</span>
+          </div>
+        )}
       </section>
 
       <div className="grid gap-4 lg:grid-cols-[2fr_3fr]">
